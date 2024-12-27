@@ -1,0 +1,6 @@
+una jugeteria necesita un programa para administrar la informacion de los productos que comercializa, de cada producto se lee: codigo, categoria (1:primera infancia , 2: didacticos, 3: de mesa, 4:otros), marca y precio. la lectura finaliza cuando se lee el codigo-1, que no debe procesarce. la informacion se lee ordenada por marca
+
+se pide: 
+a) generar una estructura que contenga, para cada marca la cantidad de productos comercializados
+b)informar las dos categorias con menor cantidad de productos comercializados
+c)informar el precio promedio de los productos con codigo multiplo de 3
