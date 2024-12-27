@@ -1,0 +1,16 @@
+ESTRUCTURAS DE CONTROL
+
+ESTRUCTURAS DE CONTROL
+los lenguajes de programacion tienen un conjunto minimo de instrucciones que permiten especificar el control del algoritmo que se quiere implementar
+
+- SECUENCIA: Estructura de control mas simple que esta representada por una sucesion de operacion (por ejemplo asignacion)
+
+- DESICION: En un algoritmo representativo de un problema real es practicamente imposible que las instrucciones sean secuenciales puras. Es necesario tomar desiciones en funcion de los datos del problema. Por ejemplo: if
+
+- ITERACION: Puede ocurrir que se decee ejecutar un bloque de instrucciones desconociendo el numero exacto de veces que se ejecutan. Existen dos tipos:
+	- PRECONDICIONALES: Evaluan la condicion y si es verdadera, se ejecuta el bloque de acciones. Por ejemplo:  WHILE
+	- POSTCONDICIONALES: Ejecutan las acciones, luego evaluan la condicion y ejecutn las acciones mientras la condicion sea falsa. Por ejemplo: repeat until
+
+- REPETICION: Consiste en repetir N (debe conocerce de ante mano) veces un bloque de acciones. Por ejemplo FOR
+
+- SELECCION: Permiten realizar distintas acciones dependiendo del valor de una variable de tipo ordinal. Por ejemplo CASE

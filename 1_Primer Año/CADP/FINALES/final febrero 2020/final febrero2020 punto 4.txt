@@ -1,0 +1,20 @@
+//defina el tipo de dato arreglo y describa los pasos necesarios (pseudocodigo) para realizar las operaciones de:
+//a) buscar un elemento en un arreglo ordenado
+//b) insertar un elemento en una posicion determinada del arreglo
+
+
+// Un arreglo es una estructura de detos de puede contener varios elementos de un solo tipo (homogteneo), con un tamanio fijo en la copilacion (estatico), indexado y lineal
+
+
+procedure insertarAlVetor(var v:vector; var dimL:integer; t; pos);
+var
+  i:integer;
+begin 
+  if((dimL+1)<dimF) and (pos>=1) and (pos<=dimL) then begin 
+    for i:=dimL dowto pos do 
+      v[i+1]:=v[i];
+    v[pos]:=t;
+    dimL:=dimL+1;
+  end;
+
+end;

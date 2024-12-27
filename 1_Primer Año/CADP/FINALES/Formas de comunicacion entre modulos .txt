@@ -1,0 +1,12 @@
+FORMAS DE COMUNICACION ENTRE MODULOS 
+
+Los modulos pueden comunicarse mediante el uso de parametros y variables globales, aunque estas ultimas no se recomiendan
+
+
+- Se pueden utilizar variables locales para comunicacion entre modulos?
+  No, porque las variables locales solo tienen alcance local.
+
+
+
+
+

@@ -1,0 +1,15 @@
+VERDADERO Y FALSO
+
+1- No es posible la utilizacion de las variables globales para la comunicacion entre los modulos de un programa
+- Falso, ya que al ser las variables globales si se pueden comunicar entre los distintos modulos del programa
+
+2- Siempre es posible realizar la eliminacion de un elemento en un vector
+- Falso, ya que si el vector esta vacio no hay nada que eliminar, deberia primero ver si el vector posee algo y el tamanio del mismo para poder recorrerlo y ver si el elemento a eliminar se encuentra en dicho vector 
+
+3- Un programa modularizado puede no ser correcto
+- Verdadero, ya que la modularizacion de un programa lo unico que hace es hacer mas leguible el codigo, pero no depende de ello que el codigo sea funcional o no 
+
+4- El acceso a un elemento de una estructura de datos lineal solo es posible a traves de un recorrido secuencial
+- Falso, el acceso a un elemento de una estructura de datos lineal no siempre requiere un recorrido secuencial.  Por ejemplo, en un array (o matriz), el acceso a un elemento específico se realiza directamente mediante su índice, lo que proporciona un acceso constante O(1) sin necesidad de recorrido secuencial.
+Sin embargo, en estructuras de datos como listas enlazadas, donde los elementos están dispersos en la memoria y no hay un acceso directo por índice, puede ser necesario realizar un recorrido secuencial para acceder a un elemento específico.
+
