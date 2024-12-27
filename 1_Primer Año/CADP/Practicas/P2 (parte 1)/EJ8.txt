@@ -1,0 +1,85 @@
+program anidamientos;
+
+procedure leer;
+var
+	letra : char;
+
+	function analizarLetra : boolean
+	begin
+		if (letra >= ‘a’) and (letra <= ‘z’) then
+			analizarLetra := true;
+		else
+		if (letra >= ‘A’) and (letra <= ‘Z’) then
+			analizarletra := false;
+	end; { fin de la funcion analizarLetra }
+
+begin
+	readln(letra);
+	if (analizarLetra) then
+	writeln(‘Se trata de una minúscula’)
+	else
+	writeln(‘Se trata de una mayúscula’);
+end; { fin del procedure leer}
+
+var
+	ok : boolean;
+begin { programa principal }
+	leer;
+	ok := analizarLetra;
+	if ok then
+	writeln(‘Gracias, vuelva prontosss’);
+end.
+
+a) La función analizarLetra fue declarada como un submódulo dentro del procedimiento leer. Pero esto
+puede traer problemas en el código del programa principal.
+i) ¿qué clase de problema encuentra?
+ii) ¿cómo se puede resolver el problema para que el programa compile y funcione correctamente?
+
+i) El problema principal es que la funcion analizarLetra esta declarada dentro del procedure por lo cual el programa principal no podra acceder a ella, hay un error de sintaxis
+
+ii) Poner la funcion analizarLetra por fuera del procedure y a letra asignarla como variable global
+
+EL PROGRAMA CON UNA BUENA SINTAXIS Y ANDANDO QUEDARIA DE LA SIGIENTE MANERA: 
+
+program anidamientos;
+
+var
+  letra: char;
+
+function analizarLetra: boolean;
+begin
+  if (letra >= 'a') and (letra <= 'z') then
+    analizarLetra := true
+  else if (letra >= 'A') and (letra <= 'Z') then
+    analizarLetra := false;
+end;
+
+procedure leer;
+var
+  ok: boolean;
+begin
+  readln(letra);
+  ok := analizarLetra;
+  if ok then
+    writeln('Se trata de una minúscula')
+  else
+    writeln('Se trata de una mayúscula');
+end;
+
+begin
+  leer;
+  writeln('Gracias, vuelva prontosss');
+end.
+
+
+
+b) La función analizarLetra parece incompleta, ya que no cubre algunos valores posibles de la variable letra.
+i) ¿De qué valores se trata?
+ii) ¿Qué sucede en nuestro programa si se ingresa uno de estos valores?
+iii) ¿Cómo se puede resolver este problema?
+
+i) se trata de los caracteres!@#$%^&*(, etc.
+
+ii) Como en el programa no tengo ninguna condicion que me lea esos caracteres, analizarLetra se podria agarrar cualquier valor y mostrarme por pantalla cualquiera de los dos write, o tambien podria no imprimir nada. dependiendo de si el codigo llega al final o no
+
+iii)En el procedure agregar un condicional preguntando si la letra introducida pertenece a algunos de estos caracteres y en caso de que sea asi mostrar un mensaje de error y volver a pedir otra letra hasta que sea un caracter valido de la a a la z 
