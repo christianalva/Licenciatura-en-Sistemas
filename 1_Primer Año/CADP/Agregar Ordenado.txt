@@ -1,0 +1,20 @@
+procedure agregarOrdenado(var l : lista; v : venta);
+var
+  aux, ant, act : lista;
+begin
+
+  new(aux);
+  aux^.dato := v;
+  act := l;
+  ant:= l;
+  while(act <> nil) and (v.codPro > act^.dato.codPro) do begin
+    ant := act;
+    act := act^.sig;
+  end;
+  if(act = ant)  then
+    l := aux
+  else
+    ant^.sig := aux;
+  aux^.sig := act;
+
+end;
