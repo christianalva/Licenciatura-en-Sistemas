@@ -1,0 +1,22 @@
+pa equ 30h
+pb equ 31h
+
+org 1000h 
+
+
+org 2000h 
+mov al, 11111111b
+out 32h, al; ca= 11111111 ; le digo que me ponga todas las llaves como entrada
+mov al, 00000000b
+out 33h, al; configuro las lueces como salida
+
+
+
+bucle:in al, pa
+out pb, al
+
+jmp bucle
+
+
+
+end

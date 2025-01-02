@@ -1,0 +1,15 @@
+PA EQU 30H
+PB EQU 31H
+CA EQU 32H
+CB EQU 33H
+
+ORG 2000H
+MOV AL, 00000000B ; Prendo las luces
+OUT CB, AL ; Muevo al registro CB del PIO para prenderlo
+LOOP: OUT PB, AL
+CMP AL, 11111111B
+JZ FIN
+INC AL
+JMP LOOP
+FIN: INT 0
+END

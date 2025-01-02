@@ -1,0 +1,40 @@
+ORG 1000H 
+MSJ DB "INGRESE UN NUMERO: "
+FIN DB ?
+NUM1 DB ?
+NUM2 DB ?
+
+ORG  3000H
+CALCULAR:INT 6
+         MOV CL, BYTE PTR [BX]
+         SUB CL, 30H
+         MOV BX, OFFSET NUM2
+         INT 6
+         MOV CH, BYTE PTR [BX]
+         SUB CH, 30H
+         ADD CL, CH 
+         MOV CH, 0
+         CMP CL, 9H
+         JS OK
+         JZ OK
+         SUB CL, 10
+         MOV CH, 1
+     OK: ADD CH, 30H
+         ADD CL, 30H
+         MOV BYTE PTR [BX], CH
+         INT 7
+         MOV BYTE PTR [BX], CL
+         INT 7
+         RET 
+
+
+ORG 2000H 
+MOV CX, 0
+MOV BX, OFFSET MSJ 
+MOV AL, OFFSET FIN-OFFSET MSJ
+INT 7
+MOV BX, OFFSET NUM1
+MOV AL, 1
+CALL CALCULAR
+INT 0
+END

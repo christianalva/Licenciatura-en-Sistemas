@@ -1,0 +1,26 @@
+ org 1000h
+var1 dW 123h
+var2 dW 456h
+
+  org 3000h
+swap: pop dx ;guardamos la direccion que habia guardado CALL
+      pop bx ;retauramos a BX para usarlo de puntero
+      mov ax,[bx] ;el contenido de BX (var2) se mueve a AX
+      mov cx,bx ;la direccion de BX se mueve a CX
+      pop bx ;restauramos a BX la direccion de var1
+      push dx ;guardamos en la pila la direccion previamente guardada por CALL
+      mov dx,[bx] ;el contenido de BX (var1) se guarda en DX
+      mov [bx],ax ;el contenido de BX (var1) es reemplazado por AX (var2)
+      mov bx,cx ;la direccion de var2 es restaurada al BX para usarlo de puntero
+      mov [bx],dx ;el contenido de BX (var2) es reemplazado por DX (var1)
+      ret ;restauramos la direccion que habia guardado CALL para volver al principal
+
+
+org 2000h
+  mov bx,offset var1 ;pasaje por referencia y pila
+  push bx
+  mov bx,offset var2
+  push bx
+  call swap
+  hlt
+end

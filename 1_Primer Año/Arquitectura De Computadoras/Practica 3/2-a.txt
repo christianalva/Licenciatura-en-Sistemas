@@ -1,0 +1,44 @@
+pa equ 30h
+pb equ 31h
+ca equ 32h
+cb equ 33h
+
+org 1000h
+letra db "A"
+fin db ?
+
+
+
+org 2000h 
+mov al, 11111101b; strobe de salida, busy de entrada
+out ca, al
+
+mov al, 0; todos de salida
+out cb, al
+
+mov bx, offset letra
+
+pool:in al, pa ;evaluamos si BUSY está en 1 o 0
+     and al, 1 ;si la máscara no da 0 entonces significa que BUSY está en 1
+     jnz pool; mientras no este libre sigo consultando
+
+     ;la impresora esta libre, busy en 0
+     mov al, [bx]
+     out pb, al
+
+     ;mando estrobe en 1
+     in al, pa ; tomamos el estado
+     or al, 2 ; fuerzo strobe a 1, es lo mismo que poner en ves de 2 00000010b
+     out pa, al ; 
+
+     ;mando strobe en 0
+     in al, pa; tomamos el estado
+     and al, 0FDH ; fuerzo el stribe en 0
+     out pa, al
+
+     inc bx
+     cmp bx, offset fin
+     jnz pool
+     
+int 0
+end

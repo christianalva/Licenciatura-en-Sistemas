@@ -1,0 +1,26 @@
+org 1000h 
+num1 db 5h
+divisor db 4h
+res dw ?
+
+org 3000h
+resto: cmp ah, 0
+     jz fin
+loop:cmp al, ah
+     js fin
+     sub al, ah
+     jmp loop
+fin: mov cl, al; aca guardo el resto
+     mov [bx], cl
+     ret 
+     
+     
+
+org 2000h
+mov al, num1 
+mov ah, divisor
+mov bx, offset res 
+mov cl, 0
+call resto 
+hlt
+end

@@ -1,0 +1,73 @@
+TIMER EQU 10H ;constante de la direccion del Timer
+PIC EQU 20H ;constante de la direccion del PIC
+EOI EQU 20H ;constante de la direccion del EOI
+N_CLK EQU 10 ;ID de la interrupcion
+
+  ORG 40
+IP_CLK DW RUT_CLK ;ID 10 x 4 = 40, direccion de memoria de la interrupcion
+
+  ORG 1000H
+SEG DB 30H ;variable seg '0'
+    DB 30H ;otro '0'
+    DB 3AH ;ASCII de ":"
+    DB 30H ;otro '0'
+    DB 30H ; '0' - 3 ceros para imrpimir de a dos digitos
+    DB " "
+FIN DB ?
+
+  ORG 3000H
+RUT_CLK: PUSH AX ;guardamos AX en la pila (las iteraciones de INT 7)
+  INC SEG+4 ;incrementamos los segundos
+  CMP SEG+4, 3AH ;comparamos con (30H + AH) quiere decir que el digito a la derecha ya llego a 9
+  JNZ RESET ;si aun no llega a 9 el digito derecho
+  MOV SEG+4, 30H ;si ya llego al 9 en el digito derecho, se reinicia a 0
+  
+  INC SEG+3 ;se incrementa el tercer digito de 30H a 31H (0 a 1 en decimal)
+  CMP SEG+3, 36H ;se compara el tercer digito con el 36H (6 es decimal)
+  JNZ RESET ;si no es 6 el tercer digito, va a reset e imprme
+  MOV SEG+3, 30H ;si es 6 entonces ya paso un minuto y debe volver a ser 0 el primer digito
+  MOV SEG+4, 30H ;vuelve a 0 el ultimo digito tambien
+  
+  INC SEG+1 ;empieza a contar los minutos
+  CMP SEG+1, 3AH ;hace la comparacion con (30H + AH)
+  JNZ RESET ;si aun no es 9 entonces imprime
+  MOV SEG+1, 30H ;si ya es 9 reinicia todos
+  MOV SEG+3, 30H
+  MOV SEG+4, 30H
+  
+  INC SEG ;suma 1 al primer digito es decir han pasado ya 10 minutos
+  CMP SEG,36H ;compara con 6
+  JNZ RESET ;si no es 6 imprime
+  MOV SEG, 30H
+  MOV SEG+1, 30H ;si ya es 6 reinicia todos
+  MOV SEG+3, 30H
+  MOV SEG+4, 30H
+
+RESET: INC CL ;sumar 1 al contador
+  CMP CL,10 ;comaparar el contador cn 10
+  JNZ SALTO ;si aun no pasaron 10 segundos no imprime
+  MOV CL,0; reiniciar contador 
+  INT 7 ;imprime '0' + el digito actual
+SALTO: MOV AL, 0 ;preparamos para reiniciar el CONT
+  OUT TIMER, AL ;configuramos el CONT
+  MOV AL, EOI ;preparamos para informar el fin de la interrupcion
+  OUT PIC, AL ;notificamos la interrupcion (es lo mismo usar PIC o EOI, en este caso ambas estan con el valor 20H)
+  POP AX ;restauramos las iteraciones de INT 7 para reiniiar AX a como estaba antes
+  IRET; fin de la interrupcion
+  
+  ORG 2000H
+  CLI ;deshabilitar interrupciones
+  MOV CX,0 ;inicializar contador
+  MOV AL, 0FDH ;preparar configuracion de bits para IMR
+  OUT PIC+1, AL ; PIC: registro IMR ;configuramos el IMR
+  MOV AL, N_CLK ;preparamos el ID para el INT1
+  OUT PIC+5, AL ; PIC: registro INT1 ;configuramos el INT1
+  MOV AL, 1 ;preparamos para configurar el comparador
+  OUT TIMER+1, AL ; TIMER: registro COMP ;configuramos el comparador
+  MOV AL, 0 ;preparamos para inicializar el contador
+  OUT TIMER, AL ; TIMER: registro CONT ;inicializamos el contador
+  MOV BX, OFFSET SEG ;configuramos para la impresion
+  MOV AL, OFFSET FIN-OFFSET SEG ;cantidad de iteraciones del INT 7
+  STI ;habilitamos interrupciones
+  LAZO: JMP LAZO ;bucle infinito
+END

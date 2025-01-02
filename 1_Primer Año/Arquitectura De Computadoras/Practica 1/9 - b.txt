@@ -1,0 +1,22 @@
+org 1000h
+bits db 10010100b
+result db ?
+veces db 2
+
+org 3000h 
+rotarizq:adc al, al
+        dec cl
+        jz fin
+        jmp rotarizq
+    fin:mov byte ptr [bx], al
+        ret
+
+org 2000h
+mov ax, 0
+mov al, bits
+mov cx, 0
+mov cl, veces
+mov bx, offset result
+call rotarizq
+hlt
+end

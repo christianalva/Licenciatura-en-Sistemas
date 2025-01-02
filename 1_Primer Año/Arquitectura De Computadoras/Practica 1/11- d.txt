@@ -1,0 +1,35 @@
+org 1000h 
+num1A dw 123h
+num1B dw 456h
+num2A dw 123h
+num2B dw 456h
+
+
+org 3000h
+sum32: pop dx
+       pop ax
+       pop bx
+       ; sumo parte baja y carry  
+       adc ax, bx
+       mov cx, ax ; guardo el resultado en cx
+       pop ax
+       pop bx
+       push dx
+       ;sumo parte alta 
+       add ax, bx
+       mov bx, cx ; guardo el resultado que guarde anteriormente en cx en bx
+       ret 
+
+org 2000h
+mov ax, num1A
+mov bx, num2A
+push ax
+push bx
+mov ax, num1B
+mov bx, num2B
+push ax
+push bx
+
+call sum32
+hlt 
+end

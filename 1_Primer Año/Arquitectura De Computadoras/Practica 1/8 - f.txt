@@ -1,0 +1,31 @@
+org 1000h
+caracter db "hola", 0h
+original db "o"
+reemplazo db "b"
+
+org 3000h
+reemplazar: pop dx
+pop bx
+pop ax
+push dx
+loop:cmp byte ptr[bx], 0h
+jz fin 
+cmp byte ptr [bx], ah
+jnz no_es
+mov byte ptr [bx], al
+no_es:inc bx
+jmp loop
+fin: ret 
+
+
+org 2000h 
+mov al, reemplazo
+mov ah, original
+push ax
+mov bx, offset caracter
+push bx
+mov cx, 0
+mov dx, 0
+call reemplazar
+hlt 
+end

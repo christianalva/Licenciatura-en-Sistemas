@@ -1,0 +1,91 @@
+HAND       EQU 40H ;constantes
+	ESTADO     EQU 41H
+	EOI        EQU 20H
+	IMR        EQU 21H
+	INT2       EQU 26H
+	ID_IMP     EQU 10 ;ID de la impresion normal
+	ID_IMP_INV EQU 11 ;ID de la impresion inversa
+
+		ORG 40
+		IP_IMP DW RUT_IMP
+
+	ORG 44
+		IP_IMP_INV DW RUT_IMP_INV
+
+	ORG 1000H
+		MSJ DB ?
+
+	ORG 3000H ;subrutina para leer mensaje
+		LEER: 	INT 6
+      			INC BX
+      			INC CL
+      			CMP CL,5
+      			JNZ LEER
+      			RET
+        
+	ORG 3050H ;subrutina para configurar impresion normal
+		CONFIGURAR: CLI
+            		MOV AL,0FBH
+            		OUT IMR,AL
+            		MOV AL,ID_IMP
+            		OUT INT2,AL
+            		MOV AL,80H
+            		OUT ESTADO,AL
+            		STI
+            		RET
+
+	ORG 3100H ;subrutina para configurar impresion inversa
+		CONFIGURAR_INV: CLI
+                		MOV AL,0FBH
+                		OUT IMR,AL
+                		MOV AL,ID_IMP_INV
+                		OUT INT2,AL
+                		MOV AL,80H
+                		OUT ESTADO,AL
+                		STI
+                		RET
+
+	ORG 3500H
+		RUT_IMP:PUSH AX
+        		MOV AL,[BX]
+        		OUT HAND,AL
+        		INC BX
+        		DEC CL
+        		CMP CL,0
+        		JNZ FINAL
+       		 	MOV AL,0FFH
+        		OUT IMR,AL
+ 		FINAL: 	MOV AL,20H
+        		OUT EOI,AL
+        		POP AX
+        		IRET
+
+	ORG 3600H
+	RUT_IMP_INV:	PUSH AX
+            		MOV AL,[BX]
+            		OUT HAND,AL
+            		DEC BX
+            		INC CL
+            		CMP CL,5
+            		JNZ FINAL_
+            		MOV AL,0FFH
+            		OUT IMR,AL
+     		FINAL_:	MOV AL,20H
+            		OUT EOI,AL
+            		POP AX
+            		IRET
+
+	ORG 2000H
+        		MOV BX,OFFSET MSJ
+        		MOV CX,0 ;inicializar contado
+        		CALL LEER
+        		MOV BX,OFFSET MSJ
+        		CALL CONFIGURAR ;configurar impresion normal
+  		LOOP: 	CMP CL,0 ;jugamos con el contador para ejecutar la interrupcion
+        		JNZ LOOP
+        		DEC BX ;restauramos BX al ultimo caracter
+        		CALL CONFIGURAR_INV ;configurar impresion inversa
+		LOOP_INV:CMP CL,5 ;jugamos con el contador para ejecutar la interrupcion
+        		JNZ LOOP_INV
+        		INT 0
+	END

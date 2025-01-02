@@ -1,0 +1,60 @@
+ ORG 1000H
+CLAVE DB 31h ;1 EN ASCII
+      DB 41H ;A
+      DB 61H ;a
+      DB 38H ;8
+      
+MSJ DB "PASS: "
+FIN DB ?
+INV DB "CLAVE INCORRECTA"
+FININV DB ?
+COR DB "CLAVE CORRECTA"
+FINCOR DB ?
+CHAR DB ? ;direccion de la contraseña ingresada
+
+  ORG 3000H
+PASSWORD: PUSH DX ;guardamos la direccion de clave en la pila
+    LOOP: INT 6 ;caracter
+          INC BX ;incrementamos bx para pasar a la siguiente celda de memoria
+          INC CL ;+1 al contador
+          CMP CL,4 ;si llega a 4 caracteres termina
+          JNZ LOOP
+          SUB BX,4 ;restauramos bx al inicio de la clave ingresada
+ VALIDAR: MOV DX,BX ;guardamos en DX la direccion en BX, no en la pila porque no podremos sacar la otra
+          POP BX ;sacamos de la pila la direccion de clave
+          MOV CH,BYTE PTR [BX] ;guardamos el primer caracter de la clave pre definida en CH
+                                ;esto se hace asi porque la estructura de las claves es una tabla
+                                ;entonces comparar bytes de forma indirecta no es posible con otros registros
+                                ;solo BX
+          INC BX ;pasamos a la siguiente celda de memoria (caracter de la clave)
+          PUSH BX ;guardamos en la pila
+          MOV BX,DX ;restauramos la direccion de char
+          CMP CH,BYTE PTR [BX] ;comparamos el primer caracter ingresado con el primer caracter pre definido
+          JNZ INVALIDO ;si es correcto continua si no termina e imprime el mensaje de clave incorrecta
+          INC BX ;siguiente celda de memoria para CHAR
+          DEC CL ;aprovechamos el contador inicial para ir en retroseso y hacer las 4 comparaciones
+          JNZ VALIDAR ;si aun no termina repite
+          MOV BX, OFFSET COR ;cuando termine establece el mensaje de clave correcta
+          MOV AL, OFFSET FINCOR - OFFSET COR
+          INT 7
+    BACK: RET
+    
+INVALIDO: MOV BX, OFFSET INV
+          MOV AL, OFFSET FININV - OFFSET INV
+          INT 7
+          JMP BACK
+
+  ORG 2000H
+  MOV BX, OFFSET CLAVE
+  MOV DX,BX ;guardamos la direccion de BX en DX de forma temporal, no puede ser la pila
+            ;porque al entrar al call la direccion de la linea siguiente se guarda en la pila
+            ;si guardasemos en la pila en este punto con intencion de usar el dato en la subrutina
+            ;explota todo porque vamos a sacar la direccion de de INT 0 y no el dato
+  MOV BX, OFFSET MSJ
+  MOV AL, OFFSET FIN - OFFSET MSJ ;iteraciones de INT 7
+  MOV CX,0 ;inicializar cx
+  INT 7
+  MOV BX, OFFSET CHAR ;ajustamos BX
+  CALL PASSWORD
+  INT 0
+  END

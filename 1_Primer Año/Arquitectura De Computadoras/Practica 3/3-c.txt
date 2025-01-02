@@ -1,0 +1,50 @@
+eoi equ 20h; uso el eoi para avisar que ya termine de atender una interrupcion 
+imr equ 21h; para habilitar la interrupcion 
+int2 equ 26h; handshake
+hand_dato equ 40h
+hand_estado equ 41h
+
+org 1000H
+mensaje db "Universidad nacional de la plata"
+fin db ?
+
+org 3000H
+imprimir:push ax; salvo ax
+         mov al, [bx]; tomo el caracter
+         out hand_dato, al; lo envio al reguistro de datos 
+         inc bx; avanzo a la siguiente posicion 
+         
+         ;aviso al pic que termine y vuelvo
+         mov al, 20h
+         out eoi, al
+         
+         pop ax; recupero lo que habia en ax
+         iret 
+          
+org 2000h 
+; confiuro el vector de interrupcion id=9
+mov ax, imprimir
+mov bx, 36
+mov [bx], ax
+;configuro el pic
+cli 
+mov al, 11111011b; solo habilito el handshake
+out imr, al
+mov al, 9
+out int2, al; mando el id seleccionado al registro int2
+sti; habilitto las interrupciones 
+mov bx, offset mensaje
+; configuro el handshake para la interrupcion 
+in al, hand_estado; tomo el estado actual
+or al, 80h; 80h= 10000000b, quiero forzar el ultimo bit a 1
+out hand_estado, al; estado = 1xxxxxxx
+; continuo con el programa principal
+pool: cmp bx, offset fin ; chequeo si llegue al final
+      jnz pool
+; desactivo el handshake por interrupcion 
+in al, hand_estado; tomo el estado actual
+and al, 07fh; 7fh= 01111111
+out hand_estado, al; estado = 0xxxxxxx
+
+int 0
+end

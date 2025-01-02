@@ -1,0 +1,16 @@
+org 1000h
+bits db 10010100b
+result db ?
+
+org 3000h 
+rotariz:adc al, al
+        mov byte ptr [bx], al
+        ret
+
+org 2000h
+mov ax, 0
+mov al, bits
+mov bx, offset result
+call rotariz
+hlt
+end
