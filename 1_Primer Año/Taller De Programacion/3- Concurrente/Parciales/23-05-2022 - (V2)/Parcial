@@ -1,0 +1,203 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos
+  proceso juntarFlores(ES flores:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+  fin
+  
+areas
+  areaSup1: AreaP(9,21,9,21)
+  areaSup1_2: AreaP (10,21,19,21)
+  areaInf1: AreaP(9,19,9,19)
+  areaInf1_2: AreaP (10,19,19,19)
+  areaC1: AreaP(9,20,9,20) 
+  areaCentro1: AreaPC(10,20,19,20)
+   
+  areaSup2: AreaP(31,21,31,21)
+  areaSup2_2: AreaP(21,21,30,21) 
+  areaInf2: AreaP(31,19,31,19)
+  areaInf2_2: AreaP(21,19,30,19)
+  areaC2: AreaP(31,20,31,20)
+  areaCentro2: AreaPC(21,20,30,20)
+ 
+  deposito: AreaPC(20,20,20,20) 
+  areaF: AreaP(20,18,20,18)
+robots
+  robot superior
+  variables
+    id,flores,av,ca:numero
+    ok:boolean
+  comenzar
+    av:=PosAv
+    si(av=9)
+      RecibirMensaje(id, RC1)
+      derecha
+    sino
+      RecibirMensaje(id, RC2)
+      repetir 3
+        derecha
+    flores:=0
+    repetir 10
+      mover
+      av:=PosAv
+      ca:=PosCa
+      si(HayFlorEnLaEsquina)
+        juntarFlores(flores)
+      
+      {lo hago de esta manera para maximizar la concurrencia}
+      mientras(flores>0)  
+        BloquearEsquina(av, ca-1)
+        Pos(av,ca-1)
+        depositarFlor
+        flores:=flores-1
+        Pos(av,ca)
+        LiberarEsquina(av,ca-1)
+    ok:=V
+    si(id=1)
+      EnviarMensaje(ok, RC1)
+    sino
+      EnviarMensaje(ok, RC2) 
+  fin
+
+  robot centro
+  variables
+    id, flores, av,ca:numero 
+    ok:boolean 
+  comenzar
+    flores:=0
+    RecibirMensaje(id, RF)
+    si(id=1)
+      derecha
+      EnviarMensaje(1, RS1)
+      EnviarMensaje(2, RI1)
+    sino
+      repetir 3
+        derecha
+      EnviarMensaje(3, RS2)
+      EnviarMensaje(4, RI2)
+    
+    repetir 2
+      RecibirMensaje(ok, *)
+    
+    repetir 10
+      mover
+      si(HayFlorEnLaEsquina)
+        juntarFlores(flores)
+    av:=PosAv
+    ca:=PosCa
+    repetir flores
+      BloquearEsquina(20,20)
+      Pos(20,20)
+      depositarFlor
+      Pos(av,ca)
+      LiberarEsquina(20,20)
+    
+    EnviarMensaje(id,RF)
+    EnviarMensaje(flores,RF)
+  fin
+  
+  robot inferior
+  variables
+    id,av,ca,flores:numero
+    ok:boolean
+  comenzar
+    av:=PosAv
+    si(av=9)
+      RecibirMensaje(id, RC1)
+      derecha
+    sino
+      RecibirMensaje(id, RC2)
+      repetir 3
+        derecha
+    repetir 10
+      mover
+      av:=PosAv
+      ca:=PosCa
+      si(HayFlorEnLaEsquina)
+        juntarFlores(flores)
+      
+      {lo hago de esta manera para maximizar la concurrencia, solo va a depositar cuando encuentre flores}
+      mientras(flores>0)  
+        BloquearEsquina(av, ca+1)
+        Pos(av,ca+1)
+        depositarFlor
+        flores:=flores-1
+        Pos(av,ca)
+        LiberarEsquina(av,ca+1)
+    
+    ok:=V
+    si(id=2)
+      EnviarMensaje(ok, RC1)
+    sino
+      EnviarMensaje(ok, RC2)
+  fin
+  
+  robot fiscalizador
+  variables
+    flores, id, primero, segundo, maxFlores, idMax:numero
+  comenzar
+    EnviarMensaje(1,RC1)
+    EnviarMensaje(2, RC2)
+    primero:=0
+    maxFlores:=-1
+    repetir 2
+      RecibirMensaje(id, *)
+      si(id=1)
+        RecibirMensaje(flores, RC1)
+      sino
+        RecibirMensaje(flores, RC2)
+      si(primero=0)
+        primero:=id
+      si(maxFlores<flores)
+        maxFlores:=flores
+        idMax:=id   
+    
+    Informar('FinalizoPrimero', primero)
+    Informar('MasFlores', idMax)
+  fin
+  
+variables
+  RS1, RS2: superior
+  RI1, RI2: inferior
+  RC1, RC2: centro
+  RF : fiscalizador
+comenzar
+  AsignarArea(RS1, areaSup1)
+  AsignarArea(RS1, areaSup1_2)
+  AsignarArea(RS1, areaCentro1)
+  AsignarArea(RI1, areaInf1)
+  AsignarArea(RI1, areaInf1_2)
+  AsignarArea(RI1, areaCentro1)
+  AsignarArea(RC1, areaC1)
+  AsignarArea(RC1, areaCentro1)
+  AsignarArea(RC1, deposito)
+  
+  AsignarArea(RS2, areaSup2)
+  AsignarArea(RS2, areaSup2_2)
+  AsignarArea(RS2, areaCentro2)
+  AsignarArea(RI2, areaInf2)
+  AsignarArea(RI2, areaInf2_2)
+  AsignarArea(RI2, areaCentro2)
+  AsignarArea(RC2, areaC2)
+  AsignarArea(RC2, areaCentro2)
+  AsignarArea(RC2, deposito)
+  
+  AsignarArea(RF, areaF)
+  
+  Iniciar(RS1, 9,21)
+  Iniciar(RC1, 9,20)
+  Iniciar(RI1, 9,19)
+  Iniciar(RS2, 31,21)
+  Iniciar(RC2, 31,20)
+  Iniciar(RI2, 31,19)
+  Iniciar(RF, 20,18)
+  
+  
+fin

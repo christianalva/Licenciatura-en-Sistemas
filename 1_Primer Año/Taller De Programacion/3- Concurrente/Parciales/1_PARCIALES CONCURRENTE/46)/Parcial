@@ -1,0 +1,154 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos
+  proceso juntarPapeles(ES papeles:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:=papeles+1
+  fin
+  
+  proceso juntarFlores(ES flores:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+  fin
+areas
+  area1P: AreaP (7,4,7,22)
+  area1P_2: AreaP (7,24,7,24)
+  area1C: AreaPC (3,23,13,23)
+  
+  area2P: AreaP (21,4,21,22)
+  area2P_2: AreaP (21,24,21,24)
+  area2C: AreaPC (17,23,27,23)
+  
+  areaF: AreaP (1,1,1,1)
+robots
+  robot florero
+  variables
+    id, flores, av, ca:numero
+  comenzar
+    RecibirMensaje(id, RF)
+
+    derecha
+    repetir 2
+      si(HayFlorEnLaEsquina)
+        juntarFlores(flores)
+      mover
+    si(HayFlorEnLaEsquina)
+      juntarFlores(flores)
+     
+    av:=PosAv+1
+    ca:=PosCa
+    BloquearEsquina(av, ca)
+    mover
+    si(HayFlorEnLaEsquina)
+      juntarFlores(flores)
+    mover
+    si(HayFlorEnLaEsquina)
+      juntarFlores(flores)
+    LiberarEsquina(av,ca)
+     
+    repetir 6
+      si(HayFlorEnLaEsquina)
+        juntarFlores(flores)
+      mover
+    si(HayFlorEnLaEsquina)
+      juntarFlores(flores)
+    
+    EnviarMensaje(id, RF)
+    EnviarMensaje(flores,RF)
+  fin
+  
+  robot papelero
+  variables
+    id, papeles, av, ca:numero
+  comenzar
+    RecibirMensaje(id, RF)
+    
+    repetir 18  
+      si(HayPapelEnLaEsquina)
+        juntarPapeles(papeles)
+      mover
+    si(HayPapelEnLaEsquina)
+      juntarPapeles(papeles)
+      
+    av:=PosAv
+    ca:=PosCa+1
+    BloquearEsquina(av, ca)
+    mover
+    si(HayPapelEnLaEsquina)
+      juntarPapeles(papeles)
+    mover
+    si(HayPapelEnLaEsquina)
+      juntarPapeles(papeles)
+    LiberarEsquina(av,ca)
+    
+    EnviarMensaje(id, RF)
+    EnviarMensaje(papeles, RF)
+  fin
+  
+  robot fiscalizador
+  variables
+    id, papeles, flores, total1, total2:numero
+  comenzar
+    {AZUL}
+    EnviarMensaje(1,r1P)
+    EnviarMensaje(2,r1F)
+    {VERDE}
+    EnviarMensaje(3,r2P)
+    EnviarMensaje(4,r2F)
+    
+    total1:=0
+    total2:=0
+    
+    repetir 4
+      RecibirMensaje(id, *)
+      si(id=1)
+        RecibirMensaje(papeles, r1P)
+        total1:=total1+papeles
+      sino 
+        si(id=2)
+          RecibirMensaje(flores, r1F)
+          total1:=total1+flores
+        sino
+          si(id=3)
+            RecibirMensaje(papeles, r2P)
+            total2:=total2+papeles
+          sino
+            RecibirMensaje(flores, r2F)
+            total2:=total2+flores
+    
+    si(total1<total2)
+      Informar('Azul', total1)
+    sino
+      Informar('Verde', total2)
+    
+  fin
+  
+variables
+  r1P,r2P: papelero
+  r1F,r2F: florero
+  RF: fiscalizador
+comenzar
+  AsignarArea(r1P, area1P)
+  AsignarArea(r1P, area1P_2)
+  AsignarArea(r1P, area1C)  
+  AsignarArea(r1F, area1C)
+  AsignarArea(r2P, area2P)
+  AsignarArea(r2P, area2P_2)
+  AsignarArea(r2P, area2C)   
+  AsignarArea(r2F, area2C)
+  
+  AsignarArea(RF, areaF)
+  Iniciar(r1F, 3,23)
+  Iniciar(r1P, 7,4)
+  Iniciar(r2F, 17,23)
+  Iniciar(r2P, 21,4)
+  Iniciar(RF, 1,1)
+fin

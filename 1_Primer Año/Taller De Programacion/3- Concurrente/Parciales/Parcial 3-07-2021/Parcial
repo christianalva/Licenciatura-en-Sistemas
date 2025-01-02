@@ -1,0 +1,123 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos
+  proceso juntarFlores(ES flores:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+  fin
+  
+  proceso juntarPapeles
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  
+areas
+  areaC: AreaP (1,1,1,1)
+  area1: AreaP (5,1,5,10)
+  area2: AreaP (6,1,6,10)
+  area3: AreaP (7,1,7,10)
+robots
+  robot recolectores
+  variables
+    id, flores, avInicial, caInicial:numero
+    ok:boolean
+  comenzar
+    RecibirMensaje(id, RC)
+    avInicial:=PosAv
+    caInicial:=PosCa
+    flores:=0
+    ok:=F
+    repetir 9
+      si(HayFlorEnLaEsquina)
+        juntarFlores(flores)
+      mover
+    si(HayFlorEnLaEsquina)
+      juntarFlores(flores)
+      
+    EnviarMensaje(id,RC)
+    EnviarMensaje(flores, RC)
+    
+    RecibirMensaje(ok, RC)
+    si(ok)
+      Pos(avInicial, caInicial)
+      repetir 9
+        juntarPapeles
+        mover
+      juntarPapeles
+      
+      EnviarMensaje(id,RC)        
+  fin
+  
+  robot coordinador
+  variables
+    id, flores, floresMax1, floresMax2, idMax1, idMax2:numero
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    flores:=0
+    floresMax1:=-1
+    floresMax2:=-1
+    idMax1:=0
+    idMax2:=0
+    repetir 3
+      RecibirMensaje(id, *)
+      si(id=1)
+        RecibirMensaje(flores, r1)
+      sino
+        si(id=2)
+          RecibirMensaje(flores, r2)
+        sino
+          RecibirMensaje(flores, r3)
+
+      si(floresMax1<flores)
+        floresMax2:=floresMax1
+        idMax2:=idMax1
+        floresMax1:=flores
+        idMax1:=id
+      sino
+        si(floresMax2<flores)
+          floresMax2:=flores
+          idMax2:=id
+    
+  
+    si((idMax1=1)|(idMax2=1))          
+      EnviarMensaje(V, r1)
+    sino
+      EnviarMensaje(F, r1)
+    
+    si((idMax1=2)|(idMax2=2))          
+      EnviarMensaje(V, r2)
+    sino
+      EnviarMensaje(F, r2)
+      
+    si((idMax1=3)|(idMax2=3))          
+      EnviarMensaje(V, r3)
+    sino
+      EnviarMensaje(F, r3)
+      
+ 
+    RecibirMensaje(id,*)
+    Informar(id)
+  fin
+  
+variables
+  r1,r2,r3: recolectores
+  RC:coordinador
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r2, area2)
+  AsignarArea(r3, area3)
+  AsignarArea(RC, areaC)
+  Iniciar(r1, 5,1)
+  Iniciar(r2, 6,1)
+  Iniciar(r3, 7,1)
+  Iniciar(RC, 1,1)
+fin

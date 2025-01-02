@@ -1,0 +1,202 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos
+
+  proceso juntarFlores(ES flores:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+  fin
+  
+  proceso juntarPapeles(ES papeles:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:=papeles+1
+  fin
+  
+  proceso hacerLado(E x:numero; ES flores:numero;
+  ES papeles:numero )
+  comenzar
+  
+    mientras (x>0)
+      si(PosCa+1 = 7)
+        si(HayFlorEnLaEsquina)
+          juntarFlores(flores)
+        si(HayPapelEnLaEsquina)
+          juntarPapeles(papeles)
+        BloquearEsquina(PosAv, PosCa+1)
+        mover
+        si(HayFlorEnLaEsquina)
+          juntarFlores(flores)
+        si(HayPapelEnLaEsquina)
+          juntarPapeles(papeles)
+        mover
+        LiberarEsquina(PosAv,PosCa-1)
+        x:=x-2
+      sino
+        si(HayFlorEnLaEsquina)
+          juntarFlores(flores)
+        si(HayPapelEnLaEsquina)
+          juntarPapeles(papeles)
+        mover
+        x:=x-1
+    si(HayFlorEnLaEsquina)
+      juntarFlores(flores)
+    si(HayPapelEnLaEsquina) 
+      juntarPapeles(papeles)
+  fin
+  
+areas
+  areaC: AreaPC (1,7,100,7)
+  areaJ: AreaP(1,1,1,1)
+  
+  area1: AreaP(5,1,15,6)
+  area1_2: AreaP(5,8,15,31)
+  
+  area2: AreaP(20,1,30,6)
+  area2_2: AreaP(20,8,30,31)
+  
+  area3: AreaP(35,1,45,6)
+  area3_2: AreaP(35,8,45,31)
+  
+  deposito:AreaPC(61,61,61,61)
+robots
+  robot rectangulo
+  variables
+    id, base, alto, papeles, flores, avInicial, caInicial:numero
+    ok:boolean
+  comenzar
+    RecibirMensaje(id, RJ)
+    papeles:=0
+    flores:=0
+    base:=10
+    Random(alto, 10,30)
+    repetir 2
+      hacerLado(alto, flores, papeles)
+      derecha
+      hacerLado(base, flores, papeles)
+      derecha
+      
+    EnviarMensaje(id, RJ)
+    EnviarMensaje(flores, RJ) 
+    
+    RecibirMensaje(ok, RJ)
+    
+    avInicial:=PosAv
+    caInicial:=PosCa
+    si(ok)
+      mientras(HayPapelEnLaBolsa)
+        BloquearEsquina(61,61)
+        Pos(61,61)
+        depositarPapel
+        papeles:=papeles-1
+        Pos(avInicial,caInicial)
+        LiberarEsquina(61,61)
+  fin
+  
+  robot callejero
+  comenzar
+    derecha
+    repetir 93
+      si((PosAv+1=5)|(PosAv+1=10)|(PosAv+1=20)|(PosAv+1=30)|(PosAv+1=35)|(PosAv+1=45))
+        BloquearEsquina(PosAv+1, PosCa)
+        si(HayFlorEnLaEsquina)
+          tomarFlor
+        mover
+        si(HayFlorEnLaEsquina)
+          tomarFlor
+        mover
+        LiberarEsquina(PosAv-1, PosCa)
+      sino
+        si(HayFlorEnLaEsquina)
+          tomarFlor
+        mover
+     
+  fin
+  
+  robot jefe
+  variables
+    id, flores, floresMax1, floresMax2, idMax1, idMax2:numero
+    ok:boolean
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    
+    floresMax1:=-1
+    floresMax2:=-1
+    
+    repetir 3
+      RecibirMensaje(id, *)
+      si(id=1)
+        RecibirMensaje(flores, r1)
+      sino 
+        si(id=2)
+          RecibirMensaje(flores, r2)
+        sino 
+          RecibirMensaje(flores, r3)
+      
+      si(floresMax1<flores)
+        floresMax2:=floresMax1
+        idMax2:=idMax1
+        floresMax1:=flores
+        idMax1:=id
+      sino
+        si(floresMax2<flores)
+          floresMax2:=flores
+          idMax2:=id
+    ok:=V
+    
+    si((idMax1=1)|(idMax2=1))
+      EnviarMensaje(ok, r1)
+    sino
+      EnviarMensaje(F, r1)
+    
+    si((idMax1=2)|(idMax2=2))
+      EnviarMensaje(ok, r2)
+    sino
+      EnviarMensaje(F, r2)
+    
+    si((idMax1=3)|(idMax2=3))
+      EnviarMensaje(ok, r3)
+    sino
+      EnviarMensaje(F, r3)
+  fin
+  
+variables
+  RJ: jefe
+  r1,r2,r3:rectangulo
+  rc: callejero
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r1, area1_2)
+  AsignarArea(r1, areaC)
+  AsignarArea(r1, deposito)
+  
+  AsignarArea(r2, area2)
+  AsignarArea(r2, area2_2)
+  AsignarArea(r2, areaC)
+  AsignarArea(r2, deposito)
+  
+  AsignarArea(r3, area3)
+  AsignarArea(r3, area3_2)
+  AsignarArea(r3, areaC)
+  AsignarArea(r3, deposito)
+  
+  AsignarArea(rc, areaC)
+  
+  AsignarArea(RJ, areaJ)
+  
+  Iniciar(r1, 5,1)
+  Iniciar(r2, 20,1)
+  Iniciar(r3, 35,1)
+  Iniciar(RJ, 1,1)
+  Iniciar(rc, 1,7)
+  
+fin

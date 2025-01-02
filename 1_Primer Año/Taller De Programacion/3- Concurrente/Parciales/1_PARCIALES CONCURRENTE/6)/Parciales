@@ -1,0 +1,111 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos
+  proceso juntarFlores(ES flores:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+  fin
+  
+  proceso juntarPapeles(ES papeles:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:=papeles+1
+  fin
+areas
+  area1: AreaP (5,1,5,10)
+  area2: AreaP (6,1,6,10)
+  area3: AreaP (7,1,7,10)
+  areaC: AreaP (1,1,1,1)
+robots
+  robot recolectores
+  variables
+    id,flores, papeles, avInicial, caInicial, total:numero
+    ok:boolean
+  comenzar
+    RecibirMensaje(id, RC)
+    
+    avInicial:=PosAv
+    caInicial:=PosCa
+    flores:=0
+    papeles:=0
+    total:=0
+    repetir 9
+      si(HayFlorEnLaEsquina)
+        juntarFlores(flores)
+      mover
+    si(HayFlorEnLaEsquina)
+      juntarFlores(flores)
+    total:=total+flores  
+    
+    EnviarMensaje(id, RC)
+    RecibirMensaje(ok, RC)
+    
+    Pos(avInicial, caInicial)
+    repetir 9
+      si(HayPapelEnLaEsquina)
+        juntarPapeles(papeles)
+      mover
+    si(HayPapelEnLaEsquina)
+      juntarPapeles(papeles)
+    total:=total+papeles
+    
+    EnviarMensaje(id, RC)
+    EnviarMensaje(total, RC)
+    
+  fin
+  
+  robot coordinador
+  variables
+    id, total, totalMax, idMax:numero
+    ok:boolean
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    totalMax:=-1
+  
+    repetir 3
+      RecibirMensaje(id,*)
+    
+    ok:=V
+    EnviarMensaje(ok, r1)
+    EnviarMensaje(ok, r2)
+    EnviarMensaje(ok, r3)
+    
+    repetir 3
+      RecibirMensaje(id, *)
+      si(id=1)
+        RecibirMensaje(total, r1)
+      sino
+        si(id=2)
+          RecibirMensaje(total, r2)
+        sino 
+          RecibirMensaje(total, r3)
+      si(totalMax<total)
+        totalMax:=total
+        idMax:=id
+          
+     
+    Informar('IDMax', idMax)  
+  fin
+  
+variables
+  r1,r2,r3: recolectores
+  RC: coordinador
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r2, area2)
+  AsignarArea(r3, area3)
+  AsignarArea(RC, areaC)
+  Iniciar(RC, 1,1)
+  Iniciar(r1, 5,1)
+  Iniciar(r2, 6,1)
+  Iniciar(r3, 7,1)  
+fin

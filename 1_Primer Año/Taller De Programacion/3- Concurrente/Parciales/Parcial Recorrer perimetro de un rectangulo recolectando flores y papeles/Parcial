@@ -1,0 +1,147 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos
+  proceso juntarFlores(ES flores:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+  fin
+  
+  proceso juntarPapeles(ES papeles:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:=papeles+1
+  fin
+  
+  proceso hacerLado(E x:numero; ES flores:numero; ES papeles:numero)
+  comenzar
+    repetir x
+      si(HayPapelEnLaEsquina)
+        juntarPapeles(papeles)
+      si(HayFlorEnLaEsquina)
+        juntarFlores(flores)
+      mover
+    si(HayPapelEnLaEsquina)
+      juntarPapeles(papeles)
+    si(HayFlorEnLaEsquina)
+      juntarFlores(flores)
+  fin
+  
+  proceso depositar(ES flores:numero; ES papeles:numero)
+  variables
+    av,ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    mientras(HayFlorEnLaBolsa)
+      BloquearEsquina(21,21)
+      Pos(21,21)
+      depositarFlor
+      flores:=flores-1
+      Pos(av,ca)
+      LiberarEsquina(21,21)
+    mientras(HayPapelEnLaEsquina)
+      BloquearEsquina(22,22)
+      Pos(22,22)
+      depositarPapel
+      papeles:=papeles-1
+      Pos(av,ca)
+      LiberarEsquina(22,22)
+  fin
+  
+areas
+  areaT1: AreaP (1,1,20,20)
+  areaT2: AreaP (21,1,40,20)
+  areaC: AreaP(23,23,23,23)
+  esquinaF: AreaPC(21,21,21,21)
+  esquinaP: AreaPC(22,22,22,22)
+robots
+  robot trabajadores
+  variables
+    flores,papeles, id, alto, ancho:numero
+  comenzar
+    RecibirMensaje(id, RC)
+    
+    RecibirMensaje(alto, RC)
+    RecibirMensaje(ancho, RC)
+    
+    repetir 2
+      hacerLado(alto, flores, papeles)
+      
+      EnviarMensaje(id, RC)
+      EnviarMensaje(papeles, RC)
+      EnviarMensaje(flores, RC)
+      depositar(flores, papeles)
+      derecha
+      
+      hacerLado(ancho, flores, papeles)
+      
+      EnviarMensaje(id, RC)
+      EnviarMensaje(papeles, RC)
+      EnviarMensaje(flores, RC)
+      depositar(flores, papeles)
+      derecha
+  fin
+  
+  robot coordinador
+  variables
+    id, alto, ancho, total1,total2, flores,papeles:numero
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    
+    total1:=0
+    total2:=0
+    
+    Random(alto, 1,19)
+    Random(ancho, 1,19)
+    EnviarMensaje(alto, r1)
+    EnviarMensaje(ancho, r1)
+    
+    Random(alto, 1,19)
+    Random(ancho, 1,19)
+    EnviarMensaje(alto, r2)
+    EnviarMensaje(ancho, r2)
+    
+    repetir 4
+      repetir 2
+        RecibirMensaje(id, *)
+        si(id=1)
+          RecibirMensaje(papeles, r1)
+          RecibirMensaje(flores, r1)
+          total1:= total1 + (papeles+flores)
+        sino
+          RecibirMensaje(papeles, r2)
+          RecibirMensaje(flores, r2)
+          total2:= total2 + (papeles+flores)
+    
+    si(total1>total2)
+      Informar(1)
+    sino
+      Informar(2)   
+  
+  fin
+  
+variables
+  r1,r2: trabajadores
+  RC:coordinador
+comenzar
+  AsignarArea(r1, areaT1)
+  AsignarArea(r1, esquinaF)
+  AsignarArea(r1, esquinaP)
+  
+  AsignarArea(r2, areaT2)
+  AsignarArea(r2, esquinaF)
+  AsignarArea(r2, esquinaP)
+  
+  AsignarArea(RC, areaC)
+  Iniciar(r1, 1,1)
+  Iniciar(r2, 21,1)
+  Iniciar(RC, 23,23)
+fin

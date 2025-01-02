@@ -1,0 +1,180 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos
+  proceso juntarFlores(ES flores:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+  fin
+  
+  proceso juntarPapeles(ES papeles:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:=papeles+1
+  fin 
+
+  proceso robotFlorero(ES flores:numero)
+  variables
+    av,ca:numero
+  comenzar
+    repetir 4
+      si(HayFlorEnLaEsquina)
+        juntarFlores(flores)
+      mover
+    si(HayFlorEnLaEsquina)
+      juntarFlores(flores)
+    
+    av:=PosAv+1
+    ca:=PosCa+1
+    
+    BloquearEsquina(av, ca)
+    mover
+    si(HayFlorEnLaEsquina)
+      juntarFlores(flores)
+    mover
+    LiberarEsquina(av,ca)
+    
+    repetir 4
+      si(HayFlorEnLaEsquina)
+        juntarFlores(flores)
+      mover
+    si(HayFlorEnLaEsquina)
+      juntarFlores(flores)
+  fin
+  
+  proceso robotPapeleros(ES papeles:numero)
+  variables
+    av,ca:numero
+  comenzar
+    repetir 7
+      si(HayPapelEnLaEsquina)
+        juntarPapeles(papeles)
+      mover
+    si(HayPapelEnLaEsquina)
+      juntarPapeles(papeles) 
+    
+    av:=PosAv+1
+    ca:=PosCa+1
+    
+    BloquearEsquina(av,ca)
+    mover
+    si(HayPapelEnLaEsquina)
+      juntarPapeles(papeles) 
+    mover
+    LiberarEsquina(av,ca)
+    
+    repetir 11
+      si(HayPapelEnLaEsquina)
+        juntarPapeles(papeles)
+      mover
+    si(HayPapelEnLaEsquina)
+      juntarPapeles(papeles) 
+  fin
+  
+areas
+  areaF: AreaP (1,1,1,1)
+  area1: AreaPC (2,4,12,24)
+  area2: AreaPC (16,4,26,24)
+robots
+
+  robot florero
+  variables
+    flores, id:numero
+  comenzar
+    RecibirMensaje(id, RF)
+    flores:=0
+    derecha
+    robotFlorero(flores)
+    
+    EnviarMensaje(id,RF)
+    EnviarMensaje(flores,RF)
+  fin
+  
+  robot papelero
+  variables
+    papeles, id:numero
+  comenzar
+    RecibirMensaje(id, RF)
+    papeles:=0
+
+    robotPapeleros(papeles)
+    
+    EnviarMensaje(id, RF)
+    EnviarMensaje(papeles, RF)
+  fin
+  
+  
+  robot azul
+  variables
+    id, total:numero
+  comenzar
+    RecibirMensaje(id, RF)
+    total:=0    
+    
+    total:=papeles+flores
+    EnviarMensaje(id, RF)
+    EnviarMensaje(total, RF)
+  fin
+  
+  robot fiscalizador
+  variables
+    id, totalAzul, totalVerde, flores, papeles:numero
+  comenzar
+    EnviarMensaje(1,azulF1)
+    EnviarMensaje(2,verdeF2)
+    EnviarMensaje(3,azulP1)
+    EnviarMensaje(4,verdeP2)
+    totalAzul:=0
+    totalVerde:=0
+    
+    repetir 4
+      RecibirMensaje(id, *)
+      si(id=1)
+        RecibirMensaje(flores, azulF1)
+        totalAzul:=totalAzul+flores
+      sino
+        si(id=2)
+          RecibirMensaje(flores, verdeF2)
+          totalVerde:=totalVerde+flores
+        sino
+          si(id=3)
+            RecibirMensaje(papeles, azulP1)
+            totalAzul:=totalAzul+papeles
+          sino
+            RecibirMensaje(papeles, verdeP2)
+            totalVerde:=totalVerde+papeles
+       
+    si(totalVerde>totalAzul)
+      Informar('Verde', totalAzul)
+    sino
+      si(totalVerde<totalAzul)
+        Informar('Azul', totalVerde)
+      sino
+        Informar('Empate',0)
+  fin
+  
+  
+variables
+  azulF1, verdeF2: florero
+  azulP1, verdeP2:papelero
+  RF: fiscalizador
+comenzar
+  AsignarArea(azulF1, area1)
+  AsignarArea(azulP1, area1)
+  
+  AsignarArea(verdeP2, area2)
+  AsignarArea(verdeF2, area2)
+  
+  AsignarArea(RF, areaF)
+  Iniciar(RF, 1,1)
+  Iniciar(azulF1, 2,12)
+  Iniciar(verdeF2, 16,12)
+  Iniciar(azulP1, 7,4)
+  Iniciar(verdeP2, 21,4)
+fin

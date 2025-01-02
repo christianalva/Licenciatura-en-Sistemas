@@ -1,0 +1,180 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos  
+  
+  proceso juntarPapel(ES papeles:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel 
+      papeles:=papeles+1
+  fin
+  
+  proceso juntarFlores(ES flores:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+  fin
+  
+  proceso hacerLado(E x:numero; ES flores:numero; ES papeles:numero)
+  comenzar
+    repetir x
+      si(HayPapelEnLaEsquina)
+        juntarPapel(papeles)
+      si(HayFlorEnLaEsquina)
+        juntarFlores(flores)
+      mover
+      
+    si(HayPapelEnLaEsquina)
+      juntarPapel(papeles)
+    si(HayFlorEnLaEsquina)
+      juntarFlores(flores)
+  fin
+   
+areas
+  areaT1: AreaP (1,1,20,20)
+  areaT2: AreaP (21,1,40,20)
+  areaC: AreaP (23,23,23,23)
+  depositoF: AreaPC(21,21,21,21)
+  depositoP: AreaPC(22,22,22,22)
+robots
+  robot trabajador
+  variables
+    id,flores,papeles, ancho, alto, avActual, caActual:numero
+  comenzar
+    flores:=0
+    papeles:=0
+    RecibirMensaje(id, RC)
+    
+    RecibirMensaje(alto, RC)
+    RecibirMensaje(ancho, RC)
+    
+    repetir 2
+      {=================ALTO====================}
+      hacerLado(alto, flores, papeles)
+    
+      avActual:=PosAv
+      caActual:=PosCa
+      EnviarMensaje(id, RC)
+      EnviarMensaje(flores, RC)
+      EnviarMensaje(papeles, RC)
+      
+      mientras(HayFlorEnLaBolsa)
+        BloquearEsquina(21,21)
+        Pos(21,21)
+        depositarFlor
+        flores:=flores-1
+        Pos(avActual, caActual)
+        LiberarEsquina(21,21)
+        
+      mientras(HayPapelEnLaBolsa)
+        BloquearEsquina(22,22)
+        Pos(22,22)
+        depositarPapel
+        papeles:=papeles-1
+        Pos(avActual,caActual)
+        LiberarEsquina(22,22)
+        
+      {=================ANCHO====================}
+      derecha
+      hacerLado(ancho, flores, papeles)
+    
+      avActual:=PosAv
+      caActual:=PosCa
+      EnviarMensaje(id, RC)
+      EnviarMensaje(flores, RC)
+      EnviarMensaje(papeles, RC)
+      
+      mientras(HayFlorEnLaBolsa)
+        BloquearEsquina(21,21)
+        Pos(21,21)
+        depositarFlor
+        flores:=flores-1
+        Pos(avActual, caActual)
+        LiberarEsquina(21,21)
+        
+      mientras(HayPapelEnLaBolsa)
+        BloquearEsquina(22,22)
+        Pos(22,22)
+        depositarPapel
+        papeles:=papeles-1
+        Pos(avActual,caActual)
+        LiberarEsquina(22,22)
+      
+      derecha
+   
+  fin
+  
+  robot coordinador
+  variables
+    id, alto, ancho, flores1, papeles1, flores2,
+    papeles2, auxFlores, auxPapeles, idMaxP, idMaxF:numero
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    flores1:=0
+    papeles1:=0
+    flores2:=0
+    papeles2:=0
+    auxFlores:=0
+    auxPapeles:=0
+    
+    
+    Random(alto, 1,20)
+    Random(ancho, 1,20)
+    EnviarMensaje(alto, r1)
+    EnviarMensaje(ancho, r1)
+    Random(alto, 1,20)
+    Random(ancho, 1,20)
+    EnviarMensaje(alto, r2)
+    EnviarMensaje(ancho, r2)
+    
+    repetir(8)
+      RecibirMensaje(id, *)
+      si(id=1)
+        RecibirMensaje(auxFlores, r1)
+        RecibirMensaje(auxPapeles, r1)
+        flores1:=flores1+auxFlores
+        papeles1:=papeles1+auxPapeles
+      sino 
+        RecibirMensaje(auxFlores, r2)
+        RecibirMensaje(auxPapeles, r2)
+        flores2:=flores2+auxFlores
+        papeles2:=papeles2+auxPapeles
+    
+    si(papeles1>papeles2)
+      idMaxP:=1
+    sino
+      idMaxP:=2
+      
+    si(flores1>flores2)
+      idMaxF:=1
+    sino
+      idMaxF:=2
+      
+    Informar('RMaxFlores',idMaxF)
+    Informar('RMaxPapeles',idMaxP)
+   
+  fin
+variables
+  r1,r2: trabajador
+  RC:coordinador
+comenzar
+  AsignarArea(r1, areaT1)
+  AsignarArea(r1, depositoF)
+  AsignarArea(r1, depositoP)
+  
+  AsignarArea(r2, areaT2)
+  AsignarArea(r2, depositoF)
+  AsignarArea(r2, depositoP)
+  
+  AsignarArea(RC, areaC)
+  
+  Iniciar(r1, 1,1)
+  Iniciar(r2, 21,1)
+  Iniciar(RC, 23,23)
+fin

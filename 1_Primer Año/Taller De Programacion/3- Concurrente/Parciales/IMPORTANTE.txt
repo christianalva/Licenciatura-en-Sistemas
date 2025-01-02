@@ -1,0 +1,16 @@
+el mientras(HayFlorEnLaBolsa) cuando quiero depositar esta mal, deberia primero contar la cantidad de papeles o flores que junto cada robot y hacer un repetir flores o repetir papeles depositando las  flores o papeles de a uno, de la siguiente manera
+
+
+repetir(cantFlores)
+      BloquearEsquina(25,25)
+      Pos(25,25)
+      depositarFlor
+      Pos(av,ca)
+      LiberarEsquina(25,25)
+
+repetir(cantPapeles)
+      BloquearEsquina(25,25)
+      Pos(25,25)
+      depositarPapel
+      Pos(av,ca)
+      LiberarEsquina(25,25)

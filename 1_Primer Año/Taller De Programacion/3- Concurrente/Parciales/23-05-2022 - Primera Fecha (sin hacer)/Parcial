@@ -1,0 +1,210 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos
+  proceso izquierda
+  comenzar
+    repetir(3)
+      derecha
+  fin
+  
+  proceso juntarFlor
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  
+  {deberia hacer un solo juntar ya que estoy repitiendo codigo}
+  proceso juntarYcontar(ES flores:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+  fin
+areas
+  areal1: AreaP(9, 21, 19, 21)
+  areac1: AreaPC(10, 20, 19, 20)
+  areal2: AreaP(9, 19, 19, 19)
+  esquina: AreaPC(20, 20, 20, 20)
+  areal3: AreaP(21, 21, 31, 21)
+  areac2: AreaPC(21, 20, 30, 20)
+  areal4: AreaP(21, 19, 31, 19)
+  spawn1: AreaP(9, 20, 9, 20)
+  spawn2: AreaP(31, 20, 31, 20)
+  areaJ: AreaP(20, 18, 20, 18)
+robots
+  robot lateralB
+  variables
+    av,ca:numero
+    ok:boolean
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    si(av=9)
+      derecha
+    sino
+      izquierda
+    
+    
+    mover    
+    repetir(9)
+      mover
+      av:=PosAv
+      ca:=PosCa
+      si(HayFlorEnLaEsquina)
+        juntarFlor
+      BloquearEsquina(av, ca+1)
+      Pos(av,ca+1)
+      mientras(HayFlorEnLaBolsa)
+        depositarFlor
+      Pos(av, ca)
+      LiberarEsquina(av,ca+1)
+    
+    ok:=V
+    
+    si(av=19)
+      EnviarMensaje(ok, rm1)
+    sino
+      EnviarMensaje(ok, rm2)    
+  
+  fin
+
+  robot lateralA
+  variables
+    av,ca:numero
+    ok:boolean
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    si(av=9)
+      derecha
+    sino
+      izquierda
+    
+    mover
+    repetir 9
+      mover
+      av:=PosAv
+      ca:=PosCa
+      si(HayFlorEnLaEsquina)
+        juntarFlor
+      BloquearEsquina(av, ca-1)
+      Pos(av,ca-1)
+      mientras(HayFlorEnLaBolsa)
+        depositarFlor
+      Pos(av, ca)
+      LiberarEsquina(av,ca-1)
+    ok:=V
+    si(av=19)
+      EnviarMensaje(ok, rm1)
+    sino
+      EnviarMensaje(ok, rm2)   
+  fin
+
+  robot medio
+  variables
+    flores, id, av,ca:numero
+    ok:boolean
+  comenzar
+    flores:=0
+    
+    si(PosAv = 9)
+      derecha
+    sino
+      izquierda
+    
+    RecibirMensaje(id, RF)
+    repetir 2
+      RecibirMensaje(ok, *)
+    
+    mover
+    repetir 9
+      mover
+      si(HayFlorEnLaEsquina)
+        juntarYcontar(flores)
+      
+    av:=PosAv
+    ca:=PosCa
+    
+   
+    BloquearEsquina(20,20)
+    Pos(20,20)
+    mientras(HayFlorEnLaBolsa)
+      depositarFlor
+    Pos(av,ca)
+    LiberarEsquina(20,20)
+    
+    EnviarMensaje(id, RF)
+    EnviarMensaje(flores, RF)
+  fin
+  
+  robot fiscalizador
+  variables
+    id, flores, cant1, cant2, dos:numero
+  comenzar
+    flores:=0
+    EnviarMensaje(1, rm1)
+    EnviarMensaje(2, rm2)
+    
+    RecibirMensaje(id, *)
+    si(id = 1)
+      RecibirMensaje(cant1, rm1)
+    sino
+      RecibirMensaje(cant2, rm2)
+      
+    RecibirMensaje(dos, *)
+    si(dos = 1)
+      RecibirMensaje(cant1, rm1)
+    sino
+      RecibirMensaje(cant2, rm2)
+    
+    Informar(id)
+    
+    si(cant1 < cant2)
+      Informar('Gano', 2)
+    sino  
+      Informar('Gano', 1)
+  fin
+  
+variables
+  RF:fiscalizador
+  l1 : lateralA
+  l2 : lateralB
+  l3 : lateralA
+  l4 : lateralB
+  rm1 : medio
+  rm2 : medio
+comenzar
+  AsignarArea(l1, areal1)
+  AsignarArea(l1, areac1)
+  
+  AsignarArea(l2, areac1)
+  AsignarArea(l2, areal2)
+  
+  AsignarArea(l3, areac2)
+  AsignarArea(l3, areal3)
+
+  AsignarArea(l4, areac2)
+  AsignarArea(l4, areal4)
+    
+  AsignarArea(rm1, areac1)
+  AsignarArea(rm1, spawn1)
+  AsignarArea(rm1, esquina)
+ 
+  AsignarArea(rm2, spawn2)
+  AsignarArea(rm2, esquina)
+  AsignarArea(rm2, areac2)
+  
+  AsignarArea(RF, areaJ)
+  
+  Iniciar(l1, 9, 21)
+  Iniciar(l2, 9, 19)
+  Iniciar(rm1, 9, 20)
+  Iniciar(l3, 31, 21)
+  Iniciar(l4, 31, 19)
+  Iniciar(rm2, 31, 20)
+  Iniciar(RF, 20, 18) 
+fin

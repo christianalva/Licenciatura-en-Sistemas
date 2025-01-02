@@ -1,0 +1,117 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+areas
+  area1: AreaP (2,2,2,2)
+  area2: AreaP(3,3,3,3)
+  area3: AreaP(4,4,4,4)
+  area4: AreaP(5,5,5,5)
+  areaJ: AreaP(1,1,1,1)
+  deposito: AreaPC(40,40,40,40)
+  esquina: AreaPC(30,30,30,30)
+robots
+  robot juntador
+  variables
+    id, avInicial, caInicial:numero
+    ok:boolean
+  comenzar
+    RecibirMensaje(id, RJ)
+    
+    avInicial:=PosAv
+    caInicial:=PosCa 
+    ok:=V
+    mientras(ok)
+      BloquearEsquina(30,30)
+      Pos(30,30)
+      si(((HayPapelEnLaEsquina)|(HayFlorEnLaEsquina)))
+        si(HayPapelEnLaEsquina)
+          tomarPapel
+        si(HayFlorEnLaEsquina)
+          tomarFlor
+        ok:=V
+      sino
+        ok:=F   
+      Pos(avInicial,caInicial)
+      LiberarEsquina(30,30)
+   
+    EnviarMensaje(id, RJ)
+   
+    RecibirMensaje(ok, RJ)
+    si(ok)
+      Pos(40,40)
+      mientras(HayFlorEnLaBolsa)
+        depositarFlor
+     
+  fin
+  
+  robot jefe
+  variables
+    id, tercero, cant:numero
+    ok:boolean
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    EnviarMensaje(4,r4)
+    cant:=0
+    repetir 4
+      RecibirMensaje(id, *)
+      cant:=cant+1
+      si(cant=3)
+        tercero:=id
+    ok:=V    
+    si(tercero=1)
+      EnviarMensaje(ok, r1)
+      EnviarMensaje(F, r2)
+      EnviarMensaje(F, r3)
+      EnviarMensaje(F, r4)
+    sino
+      si(tercero=2)
+        EnviarMensaje(ok, r2)
+        EnviarMensaje(F, r1)
+        EnviarMensaje(F, r3)
+        EnviarMensaje(F, r4)
+      sino
+        si(tercero=3)
+          EnviarMensaje(ok, r3)
+          EnviarMensaje(F, r1)
+          EnviarMensaje(F, r2)
+          EnviarMensaje(F, r4)
+        sino
+          EnviarMensaje(ok, r4)
+          EnviarMensaje(F, r2)
+          EnviarMensaje(F, r3)
+          EnviarMensaje(F, r1)
+  fin
+  
+variables
+  r1,r2,r3,r4: juntador
+  RJ:jefe
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r1, esquina)
+  AsignarArea(r1, deposito)
+  
+  AsignarArea(r2, area2)
+  AsignarArea(r2, esquina)
+  AsignarArea(r2, deposito)
+  
+  AsignarArea(r3, area3)
+  AsignarArea(r3, esquina)
+  AsignarArea(r3, deposito)
+  
+  AsignarArea(r4, area4)
+  AsignarArea(r4, esquina)
+  AsignarArea(r4, deposito)
+  
+  AsignarArea(RJ, areaJ)
+  
+  Iniciar(r1, 2,2)
+  Iniciar(r2, 3,3)
+  Iniciar(r3, 4,4)
+  Iniciar(r4, 5,5)
+  Iniciar(RJ, 1,1)
+fin

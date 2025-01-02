@@ -1,0 +1,124 @@
+programa ejemplo
+procesos
+  proceso juntarFlor(ES flores:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+  fin
+  
+  proceso hacerLado(E x:numero; ES flores:numero)
+  comenzar
+    repetir x
+      si(HayFlorEnLaEsquina)
+        juntarFlor(flores)
+      mover
+    si(HayFlorEnLaEsquina)
+      juntarFlor(flores)
+  fin
+  
+  proceso depositarFlores(E av:numero; E ca:numero)
+  comenzar
+    mientras(HayFlorEnLaBolsa)
+      BloquearEsquina(25,25)
+      Pos(25,25)
+      depositarFlor
+      Pos(av,ca)
+      LiberarEsquina(25,25)
+  fin
+  
+areas
+  area1: AreaP (1,1,6,11)
+  area2: AreaP (7,1,12,11)
+  area3: AreaP (13,1,18,11)
+  areaJ: AreaP(24,24,24,24)
+  esquina: AreaP(25,25,25,25)
+robots
+  
+  robot recolectores
+  variables
+    flores, id, av, ca, alto, ancho:numero
+  comenzar
+    RecibirMensaje(id, RJ)
+    flores:=0
+    
+    RecibirMensaje(alto, RJ)
+    RecibirMensaje(ancho, RJ)
+    repetir 2
+      hacerLado(alto, flores)
+      av:=PosAv
+      ca:=PosCa
+      depositarFlores(av, ca)
+      
+      derecha
+      
+      hacerLado(ancho, flores)
+      av:=PosAv
+      ca:=PosCa
+      depositarFlores(av, ca)
+      
+      derecha
+    
+    EnviarMensaje(id, RJ)
+    EnviarMensaje(flores, RJ)
+  fin
+  
+  robot jefe
+  variables
+    id, flores, maxFlores, idMax, alto, ancho:numero
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    maxFlores:=-1
+    
+    Random(alto,1,10)
+    Random(ancho,1,5)
+    EnviarMensaje(alto, r1)
+    EnviarMensaje(ancho, r1)
+    
+    Random(alto,1,10)
+    Random(ancho,1,5)
+    EnviarMensaje(alto, r2)
+    EnviarMensaje(ancho, r2)
+    
+    Random(alto,1,10)
+    Random(ancho,1,5)
+    EnviarMensaje(alto, r3)
+    EnviarMensaje(ancho, r3)
+    
+    repetir 3
+      RecibirMensaje(id,*)
+      si(id=1)
+        RecibirMensaje(flores, r1)
+      sino
+        si(id=2)
+          RecibirMensaje(flores,r2)
+        sino
+          RecibirMensaje(flores,r3)
+      si(flores>maxFlores)
+        maxFlores:=flores
+        idMax:=id
+    
+    Informar('RecolectoMas', idMax)
+  fin
+  
+variables
+  r1, r2, r3:recolectores
+  RJ:jefe
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r1, esquina)
+  
+  AsignarArea(r2,area2)
+  AsignarArea(r2, esquina)
+  
+  AsignarArea(r3,area3)
+  AsignarArea(r3, esquina)
+  
+  AsignarArea(RJ, areaJ)
+  Iniciar(r1, 1,1)
+  Iniciar(r2, 7,1)
+  Iniciar(r3, 13,1)
+  Iniciar(RJ, 24,24)
+fin

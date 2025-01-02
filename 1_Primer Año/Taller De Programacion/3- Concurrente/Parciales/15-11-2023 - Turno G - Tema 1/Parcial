@@ -1,0 +1,131 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos
+  proceso juntarPapel(ES papeles:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:=papeles+1
+  fin
+  
+  proceso depositarPapeles(ES papeles:numero)
+  variables
+    av,ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    mientras(HayPapelEnLaBolsa)
+      BloquearEsquina(99,99)
+      Pos(99,99)
+      depositarPapel
+      papeles:=papeles-1
+      Pos(av,ca)
+      LiberarEsquina(99,99) 
+  fin
+  
+  
+  {16 ancho max}
+  {12 alto max}
+areas
+  deposito: AreaPC(99,99,99,99)
+  area1: AreaP(2,1,18,13)
+  area2: AreaP(32,1,48,13)
+  area3: AreaP(62,1,78,13)
+  areaF: AreaP(1,1,1,1)
+robots
+  robot papelero
+  variables
+    id, papeles, alto, ancho, esquinas:numero
+    ok:boolean
+  comenzar
+    RecibirMensaje(id, RF)
+    esquinas:=0
+    repetir 4
+      Random(alto,1,3)
+      Random(ancho,2,4)
+ 
+      repetir alto
+        si(HayPapelEnLaEsquina)
+          juntarPapel(papeles)
+          esquinas:=esquinas+1
+        mover
+      si(HayPapelEnLaEsquina)
+        juntarPapel(papeles)
+        esquinas:=esquinas+1
+        
+      depositarPapeles(papeles)
+      
+      derecha
+      repetir ancho 
+        si(HayPapelEnLaEsquina)
+          juntarPapel(papeles)
+          esquinas:=esquinas+1
+        mover
+      si(HayPapelEnLaEsquina)
+        juntarPapel(papeles)
+        esquinas:=esquinas+1
+          
+      depositarPapeles(papeles)
+        
+      repetir 3
+        derecha
+      
+      EnviarMensaje(id, RF)
+      RecibirMensaje(ok, RF)
+    
+    EnviarMensaje(esquinas, RF)
+  fin
+  
+  robot fiscalizador
+  variables
+    id, papeles, esquinas, cant:numero
+    ok:boolean
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    esquinas:=0
+    ok:=V
+    repetir 4
+      repetir 3
+        RecibirMensaje(id, *)
+        
+      EnviarMensaje(ok, r1)  
+      EnviarMensaje(ok, r2)
+      EnviarMensaje(ok, r3)
+    
+    repetir 3
+      RecibirMensaje(cant, *)
+      esquinas:=esquinas+cant
+    Pos(99,99)
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:=papeles+1
+    Informar('EsquinasVaciadas', esquinas)
+    Informar('Papeles', papeles)
+  fin
+  
+variables
+  r1,r2,r3: papelero
+  RF:fiscalizador
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r1, deposito)
+  
+  AsignarArea(r2, area2)
+  AsignarArea(r2, deposito)
+ 
+  AsignarArea(r3, area3)
+  AsignarArea(r3, deposito)
+  
+  AsignarArea(RF, areaF) 
+  AsignarArea(RF, deposito)
+  Iniciar(r1, 2,1)
+  Iniciar(r2, 32,1)
+  Iniciar(r3, 62,1)
+  Iniciar(RF, 1,1)
+fin
