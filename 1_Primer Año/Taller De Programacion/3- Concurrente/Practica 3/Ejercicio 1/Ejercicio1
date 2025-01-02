@@ -1,0 +1,125 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos
+  
+  proceso juntarFlores(ES flores:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+  fin  
+  
+  proceso juntarPapel(ES papeles:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:=papeles+1
+  fin
+    
+  proceso depositarFlores( E flores:numero; E av:numero; E ca:numero)
+  comenzar
+    repetir(flores)
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      depositarFlor
+      Pos(av,ca)
+      LiberarEsquina(10,10)
+  fin
+  
+  proceso depositarPapeles(E papeles:numero; E av:numero; E ca:numero)
+  comenzar
+    repetir papeles
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      depositarPapel
+      Pos(av,ca)
+      LiberarEsquina(10,10)      
+  fin
+   
+areas
+  areaDepositar: AreaC(10,10,10,10)  
+  area1: AreaC(1,1,5,10)
+  area2: AreaC(6,1,10,9)
+  
+  areaF1: AreaP(6,10,6,10)
+  areaF2: AreaP(7,10,7,10)
+  
+  areaP1: AreaP(8,10,8,10)
+  areaP2: AreaP(9,10,9,10)
+  
+robots
+  robot florero
+  variables
+    flores, avAleat, caAleat, avOriginal, caOriginal:numero
+  comenzar
+    flores:=0
+    avOriginal := PosAv
+    caOriginal := PosCa
+    
+    repetir 5
+      Random(avAleat, 1,5)
+      Random(caAleat, 1,10)
+      
+      BloquearEsquina(avAleat, caAleat)
+      Pos(avAleat, caAleat)
+      si(HayFlorEnLaEsquina)
+        juntarFlores(flores)
+      Pos(avOriginal, caOriginal)
+      
+      LiberarEsquina(avAleat, caAleat)
+      
+    depositarFlores(flores, avOriginal, caOriginal)
+  fin
+  
+  robot papeleros
+  variables
+    papeles, avOriginal, caOriginal, avAleat, caAleat:numero
+  comenzar
+    papeles:=0
+    avOriginal:=PosAv
+    caOriginal:=PosCa
+    
+    repetir 3
+      Random(avAleat, 6,10)
+      Random(caAleat, 1,9)
+      
+      BloquearEsquina(avAleat,caAleat)
+      Pos(avAleat,caAleat)
+      si(HayPapelEnLaEsquina)
+        juntarPapel(papeles)
+        
+      Pos(avOriginal,caOriginal)
+      
+      LiberarEsquina(avAleat,caAleat)
+    
+    depositarPapeles(papeles, avOriginal, caOriginal)
+            
+  fin
+
+variables
+  rF1, rF2: florero
+  rP1, rP2: papeleros
+comenzar
+  AsignarArea(rF1, areaF1)
+  AsignarArea(rF2, areaF2)
+  AsignarArea(rF1, area1)
+  AsignarArea(rF2, area1)
+  AsignarArea(rF1, areaDepositar)
+  AsignarArea(rF2, areaDepositar)
+  
+  AsignarArea(rP1, areaP1)
+  AsignarArea(rP2, areaP2)
+  AsignarArea(rP1, area2)
+  AsignarArea(rP2, area2)
+  AsignarArea(rP1, areaDepositar)
+  AsignarArea(rP2, areaDepositar)
+  
+  Iniciar(rF1, 6,10)
+  Iniciar(rF2, 7,10)
+  Iniciar(rP1, 8,10)
+  Iniciar(rP2, 9,10)
+fin

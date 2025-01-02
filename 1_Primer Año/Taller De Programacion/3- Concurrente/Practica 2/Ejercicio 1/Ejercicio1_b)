@@ -1,0 +1,82 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos
+  proceso juntarFlores(ES flor:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flor:=flor+1
+  fin 
+  
+  
+  proceso recorrerAv(ES flores:numero)
+  comenzar
+    repetir 9
+      juntarFlores(flores)
+      mover
+    juntarFlores(flores)
+  fin
+  
+areas
+  area1: AreaP(1,1,1,10)
+  area2: AreaP(2,11,2,20)
+  area3: AreaP(2,1,2,1)
+robots
+  robot juntador
+  variables
+    flores, numRobot:numero
+  comenzar
+    RecibirMensaje(numRobot, rFiscalizador)
+    flores := 0 
+    
+    recorrerAv(flores)
+    
+    EnviarMensaje(numRobot, rFiscalizador)
+    EnviarMensaje(flores, rFiscalizador)
+  fin
+  
+  robot jefe
+  variables
+    numRobot, flores, flores2 ,diferencia, ganador:numero
+  comenzar
+    flores := 0
+    flores2 := 0
+    diferencia := 0
+    ganador := 0
+    EnviarMensaje(1, r1)
+    
+    EnviarMensaje(2, r2)
+    
+    repetir 2
+      RecibirMensaje(numRobot, *)
+      si(numRobot = 1)
+        RecibirMensaje(flores, r1)
+      sino
+        RecibirMensaje(flores2, r2)
+        
+    si(flores = flores2)
+      Informar('Empate', V)
+    
+    si(flores > flores2)
+      diferencia := flores - flores2
+      Informar('r1_diferencia', diferencia)
+    sino
+      diferencia := flores2 - flores
+      Informar('r2_diferencia', diferencia)   
+  fin
+variables
+  r1: juntador
+  r2: juntador
+  rFiscalizador: jefe
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r2, area2)
+  AsignarArea(rFiscalizador, area3)
+  Iniciar(r1, 1,1)
+  Iniciar(r2, 2,11)
+  Iniciar(rFiscalizador,2,1)
+fin

@@ -1,0 +1,129 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos
+  proceso juntarPapeles(ES papeles:numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      papeles := papeles + 1
+  fin
+  
+  proceso juntarFlores(ES flores:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+  fin
+  
+  proceso equipoA(ES papeles:numero)
+  comenzar
+    repetir 9
+      juntarPapeles(papeles)
+      mover
+    juntarPapeles(papeles)
+  fin
+  
+  proceso equipoB(ES flores:numero)
+  comenzar
+    repetir 9
+      juntarFlores(flores)
+      mover
+    juntarFlores(flores)
+  fin
+  
+areas
+  area1: AreaP(1,1,10,1)
+  area1b: AreaP(21,1,30,1)
+  
+  area1_2: AreaP(11,1,20,1)
+  area1_2b: AreaP(31,1,40,1)
+  
+  area2: AreaP(1,5,10,5)
+  area2b: AreaP(21,5,30,5)
+  
+  area2_2: AreaP(11,5,20,5)
+  area2_2b: AreaP(31,5,40,5)
+robots
+  robot robotA1
+  variables
+    papeles:numero
+  comenzar
+    papeles:=0
+    derecha
+    equipoA(papeles)
+    EnviarMensaje(papeles,rA2)
+    Pos(21,1)
+    RecibirMensaje(papeles,rA2)
+    equipoA(papeles)
+    EnviarMensaje(papeles,rA2)
+  fin
+  
+  robot robotA2
+  variables
+    papeles:numero
+  comenzar
+    RecibirMensaje(papeles, rA1)
+    derecha
+    equipoA(papeles)
+    EnviarMensaje(papeles,rA1)
+    Pos(31,1)
+    RecibirMensaje(papeles,rA1)
+    equipoA(papeles)
+    
+    Informar('Total', papeles)
+  fin
+  
+  robot robotB1
+  variables
+    flores:numero
+  comenzar
+    flores:=0
+    derecha
+    equipoB(flores)
+    EnviarMensaje(flores, rB2)
+    Pos(21,5)
+    RecibirMensaje(flores, rB2)
+    equipoB(flores)
+    EnviarMensaje(flores, rB2)
+  fin
+  
+  robot robotB2
+  variables
+    flores:numero
+  comenzar
+    RecibirMensaje(flores, rB1)
+    derecha
+    equipoB(flores)
+    EnviarMensaje(flores,rB1)
+    Pos(31,5)
+    RecibirMensaje(flores,rB1)
+    equipoB(flores)
+    Informar('Total', flores)
+  fin
+variables
+  rA1: robotA1
+  rA2: robotA2
+  rB1: robotB1
+  rB2: robotB2
+comenzar
+  AsignarArea(rA1, area1)
+  AsignarArea(rA1, area1b)
+  
+  AsignarArea(rA2, area1_2)
+  AsignarArea(rA2, area1_2b)
+  
+  AsignarArea(rB1, area2)
+  AsignarArea(rB1, area2b)
+  
+  AsignarArea(rB2, area2_2)
+  AsignarArea(rB2, area2_2b)
+  
+  Iniciar(rA1,1,1)
+  Iniciar(rA2,11,1)
+  Iniciar(rB1,1,5)
+  Iniciar(rB2,11,5)
+fin

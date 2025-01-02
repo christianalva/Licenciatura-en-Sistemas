@@ -1,0 +1,135 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos
+
+  proceso juntarYmoverFlor(E x:numero; E y:numero)
+  comenzar
+    tomarFlor
+    BloquearEsquina(11,11)
+    Pos(11,11)
+    LiberarEsquina(10,10)
+    depositarFlor
+    Pos(x,y)
+    LiberarEsquina(11,11)
+  fin
+  
+  proceso informarUltimo(E ID:numero)
+  comenzar
+    si(ID=1)
+      Informar(1)
+    sino 
+      si(ID = 2)
+        Informar(2)
+      sino
+        si(ID = 3)
+          Informar(3)
+        sino 
+          Informar(4)
+  fin
+
+  proceso moverFlores(ES termino:boolean)
+  variables
+    av, ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    
+    BloquearEsquina(10,10)
+    Pos(10,10) 
+    si (HayFlorEnLaEsquina)
+      juntarYmoverFlor(av,ca)         
+    sino
+      termino := V  
+      Pos(av,ca)
+      LiberarEsquina(10,10)
+  fin
+  
+  proceso recolectarFlores
+  comenzar
+    BloquearEsquina(11,11)
+    Pos(11,11)
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+    Pos(1,1)
+    LiberarEsquina(11,11)
+  fin
+ 
+areas
+  esquina1010: AreaC (10,10,10,10)
+  esquina1111: AreaC (11,11,11,11)
+  
+  areaCoordinador: AreaP(1,1,1,1)
+  area1: AreaP(9,9,9,9)
+  area2: AreaP(9,10,9,10)
+  area3: AreaP(9,11,9,11)
+  area4: AreaP(9,12,9,12)
+robots
+  robot juntadores
+  variables
+    ID:numero
+    termino:boolean
+  comenzar
+    RecibirMensaje(ID, RC)
+    termino:=F
+    
+    mientras ~termino
+      moverFlores(termino)
+    
+    EnviarMensaje(ID, RC)
+  fin
+
+  robot coordinador
+  variables
+    ID:numero
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    EnviarMensaje(4,r4)
+    
+    
+    repetir 4
+      RecibirMensaje(ID, *)
+    
+    informarUltimo(ID)
+    
+    recolectarFlores
+    
+  fin
+variables
+  RC:coordinador
+  r1:juntadores
+  r2:juntadores
+  r3:juntadores
+  r4:juntadores
+comenzar
+  AsignarArea(RC, areaCoordinador)
+  AsignarArea(RC, esquina1111)
+  
+  AsignarArea(r1, area1)
+  AsignarArea(r1, esquina1010)
+  AsignarArea(r1, esquina1111)
+  
+  AsignarArea(r2, area2)
+  AsignarArea(r2, esquina1010)
+  AsignarArea(r2, esquina1111)
+  
+  AsignarArea(r3, area3)
+  AsignarArea(r3, esquina1010)
+  AsignarArea(r3, esquina1111)
+  
+  AsignarArea(r4, area4)
+  AsignarArea(r4, esquina1010)
+  AsignarArea(r4, esquina1111)
+  
+  Iniciar(RC, 1,1)
+  Iniciar(r1, 9,9)
+  Iniciar(r2, 9,10)
+  Iniciar(r3, 9,11)
+  Iniciar(r4, 9,12)
+  
+fin

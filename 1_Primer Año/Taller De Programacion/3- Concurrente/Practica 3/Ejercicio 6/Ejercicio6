@@ -1,0 +1,361 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos
+  proceso juntarFlor
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  
+  proceso juntarPapel
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  
+  proceso realizarCuadrante1
+  comenzar
+    repetir 6
+      si(HayFlorEnLaEsquina)
+        juntarFlor
+      mover
+    si(HayFlorEnLaEsquina)
+      juntarFlor
+      
+    derecha
+    
+    repetir 2
+      si(HayFlorEnLaEsquina)
+        juntarFlor
+      mover
+    si(HayFlorEnLaEsquina)
+      juntarFlor
+      
+    BloquearEsquina(5,8)
+    mover
+    si(HayFlorEnLaEsquina)
+      juntarFlor
+    mover
+    si(HayFlorEnLaEsquina)
+      juntarFlor
+    LiberarEsquina(5,8)
+    repetir 2
+      mover
+      si(HayFlorEnLaEsquina)
+        juntarFlor
+    derecha
+    
+    repetir 6   
+      si(HayFlorEnLaEsquina)
+        juntarFlor
+      mover
+    si(HayFlorEnLaEsquina)
+      juntarFlor
+    
+    derecha
+    
+    BloquearEsquina(8,5)
+    mover
+    si(HayFlorEnLaEsquina) 
+      juntarFlor
+    mover
+    LiberarEsquina(8,5)
+    si(HayFlorEnLaEsquina)
+      juntarFlor
+    repetir 4    
+      mover
+      si(HayFlorEnLaEsquina)
+        juntarFlor
+  fin
+  
+  proceso realizarCuadrante2
+  comenzar
+    repetir 2
+      si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+        juntarFlor
+        juntarPapel
+      mover
+    si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+      juntarFlor
+      juntarPapel
+    BloquearEsquina(5,8)
+    mover
+    si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+      juntarFlor
+      juntarPapel
+    mover
+    si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+      juntarFlor
+      juntarPapel
+    LiberarEsquina(5,8)
+    
+    repetir 6
+      mover
+      si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+        juntarFlor
+        juntarPapel
+    
+    derecha
+    
+    repetir 3
+      si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+        juntarFlor
+        juntarPapel
+      mover
+    si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+      juntarFlor
+      juntarPapel
+    
+    BloquearEsquina(9,15)
+    mover
+    si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+      juntarFlor
+      juntarPapel
+    mover
+    si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+      juntarFlor
+      juntarPapel
+    LiberarEsquina(9,15)
+    
+    repetir 5
+      si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+        juntarFlor
+        juntarPapel
+      mover
+    si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+      juntarFlor
+      juntarPapel
+    
+    derecha
+    
+    repetir 5
+      si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+        juntarFlor
+        juntarPapel
+      mover
+    si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+      juntarFlor
+      juntarPapel
+    
+    BloquearEsquina(15,9)
+    mover
+    si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+      juntarFlor
+      juntarPapel
+    mover
+    si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+      juntarFlor
+      juntarPapel
+    LiberarEsquina(15,9)
+    
+    repetir 3
+      si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+        juntarFlor
+        juntarPapel
+      mover
+    si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+      juntarFlor
+      juntarPapel
+    
+    derecha
+    
+    repetir 6
+      si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+        juntarFlor
+        juntarPapel
+      mover
+    si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+      juntarFlor
+      juntarPapel
+    
+    BloquearEsquina(8,5)
+    mover
+    si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+      juntarFlor
+      juntarPapel
+    mover
+    LiberarEsquina(8,5)
+    si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+      juntarFlor
+      juntarPapel
+    
+    repetir 2
+      mover
+      si((HayFlorEnLaEsquina)|(HayPapelEnLaEsquina))
+        juntarFlor
+        juntarPapel
+  fin
+  
+  proceso realizarCuadrante3
+  comenzar
+    repetir 5
+      si(HayPapelEnLaEsquina)
+        juntarPapel
+      mover
+    si(HayPapelEnLaEsquina)
+      juntarPapel
+    
+    BloquearEsquina(9,15)
+    mover
+    si(HayPapelEnLaEsquina)
+      juntarPapel
+    mover
+    si(HayPapelEnLaEsquina)
+      juntarPapel
+    LiberarEsquina(9,15)
+    
+    derecha
+    
+    repetir 7
+      si(HayPapelEnLaEsquina)
+        juntarPapel
+      mover
+    si(HayPapelEnLaEsquina)
+      juntarPapel
+      
+    derecha
+    
+    repetir 7
+      si(HayPapelEnLaEsquina)
+        juntarPapel
+      mover
+    si(HayPapelEnLaEsquina)
+      juntarPapel
+      
+    derecha
+    
+    BloquearEsquina(15,9)
+    mover
+    si(HayPapelEnLaEsquina)
+      juntarPapel
+    mover
+    si(HayPapelEnLaEsquina)
+      juntarPapel
+    LiberarEsquina(15,9)
+    
+    repetir 5
+      si(HayPapelEnLaEsquina)
+        juntarPapel
+      mover
+    si(HayPapelEnLaEsquina)
+      juntarPapel
+    
+  
+  fin
+ 
+  proceso recorrerCalle
+  comenzar
+    mientras((HayFlorEnLaBolsa)|(HayPapelEnLaBolsa)&(PosAv < 100))
+      si(HayFlorEnLaBolsa)
+        depositarFlor
+      si(HayPapelEnLaBolsa)
+        depositarPapel
+      mover  
+  fin
+  
+areas
+  areaFiscalizador: AreaP(1,1,1,1)
+  area1: AreaPC (2,2,16,16)
+  calle: AreaPC(1,20,100,22)
+robots
+  robot recolector1
+  variables
+    ID, ca:numero
+  comenzar
+    RecibirMensaje(ID, RF)
+    
+    realizarCuadrante1
+ 
+    EnviarMensaje(ID, RF)
+    
+    RecibirMensaje(ca, RF){ca es la calle que tiene q recorrer y depositar las flores}
+    Pos(1,ca)
+    repetir 2
+      derecha
+    recorrerCalle
+    
+  fin
+  
+  robot recolector2
+  variables
+    ID, ca:numero
+  comenzar
+    RecibirMensaje(ID, RF)
+    
+    realizarCuadrante2
+    
+    EnviarMensaje(ID, RF)
+    
+    RecibirMensaje(ca, RF)
+    
+    Pos(1,ca)
+    repetir 2
+      derecha
+    recorrerCalle
+  fin  
+  
+  robot recolector3
+  variables
+    ID, ca:numero
+  comenzar
+    RecibirMensaje(ID, RF)
+    
+    realizarCuadrante3
+    
+    EnviarMensaje(ID, RF)
+    
+    RecibirMensaje(ca, RF)
+    
+    Pos(1,ca)
+    repetir 2
+      derecha
+    recorrerCalle
+  fin  
+  
+  
+  robot fiscalizador
+  variables
+    ca, id:numero
+  comenzar
+    ca:=20
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    repetir 3
+      RecibirMensaje(id,*)
+      si id=1
+        EnviarMensaje(ca,r1)
+      sino
+        si id=2
+          EnviarMensaje(ca,r2)
+        sino
+          EnviarMensaje(ca,r3)
+      ca:= ca+1
+  fin
+variables
+  RF: fiscalizador
+  r1:recolector1
+  r2:recolector2
+  r3:recolector3
+comenzar
+  AsignarArea(RF, areaFiscalizador)
+  
+  AsignarArea(r1, area1)
+  AsignarArea(r1, calle)
+  
+  AsignarArea(r2, area1)
+  AsignarArea(r2, calle)
+  
+  AsignarArea(r3, area1)
+  AsignarArea(r3, calle)
+  
+  Iniciar(RF, 1,1)
+  Iniciar(r1, 2,2)
+  Iniciar(r2, 5,5)
+  Iniciar(r3, 9,9)
+  
+fin

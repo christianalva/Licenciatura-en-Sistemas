@@ -1,0 +1,105 @@
+programa ejemplo
+procesos
+  proceso juntarFlores(ES flores:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+  fin
+  
+  proceso juntarPapeles(ES papeles:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:=papeles+1
+  fin
+areas
+  areaF: AreaP (1,1,1,1)
+  area1: AreaP (2,1,2,100)
+  area2: AreaP (3,1,3,100)
+  area3: AreaP (1,98,100,98)
+  area4: AreaP (1,99,100,99)
+robots
+  robot equipoRojo
+  variables
+    flores, id:numero
+  comenzar
+    flores:=0
+    RecibirMensaje(id, RF)
+    repetir 99
+      juntarFlores(flores)
+      mover
+    juntarFlores(flores)
+    
+    EnviarMensaje(id, RF)
+    EnviarMensaje(flores,RF)
+  fin
+  
+  robot equipoAzul
+  variables
+    id, papeles:numero
+  comenzar
+    papeles:=0
+    RecibirMensaje(id, RF)
+    derecha
+    repetir 99
+      juntarPapeles(papeles)
+      mover
+    juntarPapeles(papeles)
+    
+    EnviarMensaje(id, RF)
+    EnviarMensaje(papeles,RF)
+  fin
+
+  robot fiscalizador
+  variables
+    id:numero
+    flores, papeles, floresTotal, papelesTotal:numero
+  comenzar
+    floresTotal:=0
+    papelesTotal:=0
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    EnviarMensaje(4,r4)
+    repetir 4
+      RecibirMensaje(id, *)
+      si(id=1)
+        RecibirMensaje(flores,r1)
+        floresTotal:=floresTotal+flores
+      sino
+        si(id=2)
+          RecibirMensaje(flores,r2)
+          floresTotal:=floresTotal+flores
+        sino
+          si(id=3)
+            RecibirMensaje(papeles, r3)
+            papelesTotal:=papelesTotal+papeles
+          sino
+            RecibirMensaje(papeles, r4)
+            papelesTotal:=papelesTotal+papeles
+          
+    si(floresTotal>papelesTotal)
+      Informar('EquipoRojo', floresTotal)
+    sino
+      si(floresTotal<papelesTotal)
+        Informar('EquipoAzul', papelesTotal)
+      sino
+        Informar('Empate', 0)
+  fin
+variables
+  RF: fiscalizador
+  r1, r2: equipoRojo 
+  r3, r4: equipoAzul
+comenzar
+  AsignarArea(RF, areaF)
+  AsignarArea(r1,area1)
+  AsignarArea(r2,area2)
+  AsignarArea(r3, area3)
+  AsignarArea(r4, area4)
+  Iniciar(RF, 1,1)
+  Iniciar(r1, 2,1)
+  Iniciar(r2, 3,1)
+  Iniciar(r3, 1,98)
+  Iniciar(r4, 1,99)
+fin

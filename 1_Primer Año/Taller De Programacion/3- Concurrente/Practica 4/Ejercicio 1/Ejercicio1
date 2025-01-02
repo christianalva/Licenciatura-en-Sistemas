@@ -1,0 +1,122 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos
+  proceso juntarFlores
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+ 
+  proceso depositarFlores(E flores:numero; E av:numero; E ca:numero)
+  comenzar
+    BloquearEsquina(av, ca)
+    Pos(av, ca)
+    repetir flores
+      depositarFlor
+    Pos(100,100)
+    LiberarEsquina(av, ca)
+  fin
+
+
+areas
+  areaServidor: AreaP(100,100,100,100)
+  area1: AreaPC(1,1,1,100)
+  area2: AreaPC(2,1,2,100)
+  area3: AreaPC(3,1,3,100)
+robots
+  robot cliente
+  variables
+    ID, ca:numero
+    flores, calleSig:numero
+    ok:boolean
+  comenzar
+    RecibirMensaje(ID, RS)
+    
+    mientras(PosCa < 100)
+      Random(flores, 1,4)
+      ca := PosCa
+      EnviarMensaje(ID, RS)
+      EnviarMensaje(flores, RS)
+      calleSig:=PosCa+1
+      EnviarMensaje(calleSig, RS)
+      
+      RecibirMensaje(ok, RS){con esto espero a que deposite las flores}
+      
+      Pos(PosAv, calleSig)
+      juntarFlores
+      
+      Pos(PosAv, ca)
+      mientras ((PosCa < 100)&(HayFlorEnLaBolsa))
+        depositarFlor
+        mover        
+    
+    EnviarMensaje(ID, RS)
+    EnviarMensaje(0, RS)
+    EnviarMensaje(100, RS)
+
+    
+    
+  fin
+
+  robot servidor
+  variables
+    ID, termino:numero
+    ca, flores:numero
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    termino:=0
+    
+    
+    mientras(termino < 3)
+      RecibirMensaje(ID, *)
+      si(ID=1)
+        RecibirMensaje(flores, r1)
+        RecibirMensaje(ca, r1)
+      sino
+        si(ID=2)
+          RecibirMensaje(flores, r2)
+          RecibirMensaje(ca, r2)
+        sino
+          RecibirMensaje(flores, r3)
+          RecibirMensaje(ca, r3)
+          
+      si(flores <> 0)
+        depositarFlores(flores,ID, ca)
+      sino 
+        termino:=termino+1
+      
+      si(ID=1)
+        EnviarMensaje(V, r1)
+      sino
+        si(ID=2)
+          EnviarMensaje(V, r2)
+        sino
+          EnviarMensaje(V, r3)
+    
+  fin
+variables
+  RS: servidor
+  r1,r2,r3: cliente
+comenzar
+  AsignarArea(RS, areaServidor)
+  AsignarArea(RS, area1)
+  AsignarArea(RS, area2)
+  AsignarArea(RS, area3)
+  
+  AsignarArea(r1, area1)
+  
+  AsignarArea(r2, area2)
+  
+  AsignarArea(r3, area3)
+  
+  Iniciar(RS, 100,100)
+  Iniciar(r1, 1,1)
+  Iniciar(r2, 2,1)
+  Iniciar(r3, 3,1)
+fin

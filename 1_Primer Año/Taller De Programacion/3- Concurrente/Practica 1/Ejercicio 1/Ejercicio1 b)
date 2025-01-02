@@ -1,0 +1,62 @@
+programa Programa1
+procesos
+  proceso juntarFlores(ES floresRecolectadas:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      floresRecolectadas := floresRecolectadas+1
+  fin
+  
+  proceso evaluarEsquina(ES floresRecolectadas: numero; ES esquinasSinFlores: numero)
+  comenzar
+    si(HayFlorEnLaEsquina)
+      juntarFlores(floresRecolectadas)
+    sino
+      esquinasSinFlores := esquinasSinFlores+1
+  fin
+  proceso depositarTodo(E cant:numero)
+  comenzar
+    repetir cant
+      depositarFlor
+  fin
+  
+  proceso recorrerAvenida
+  variables
+    esquinasSinFlores: numero
+    floresRecolectadas: numero
+  comenzar
+    esquinasSinFlores := 0
+    floresRecolectadas := 0
+    evaluarEsquina(floresRecolectadas,  esquinasSinFlores)
+    repetir 99 
+      mover
+      evaluarEsquina(floresRecolectadas,  esquinasSinFlores)   
+    depositarTodo(floresRecolectadas)
+    Informar("Cant_Flores", floresRecolectadas)
+    Informar("Esquinas_Vacias", esquinasSinFlores)
+  fin
+  
+  
+areas
+  ciudad: AreaC (1,1,100,100)
+
+robots
+  robot robot1
+  
+  comenzar
+    recorrerAvenida
+  fin
+  
+  
+variables
+  Robot1: robot1
+  Robot2: robot1
+  Robot3: robot1
+comenzar
+  AsignarArea(Robot1, ciudad)
+  AsignarArea(Robot2, ciudad)
+  AsignarArea(Robot3, ciudad)
+  Iniciar(Robot1, 1,1)
+  Iniciar(Robot2, 3,1)
+  Iniciar(Robot3, 5,1)
+fin

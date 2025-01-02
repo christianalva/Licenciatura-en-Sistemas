@@ -1,0 +1,114 @@
+{usando el PosCa se cuantas calles recorrio cada uno asi q sabria cual fue el que mas recorrio usando eso}
+programa ejercicio5
+procesos
+
+  proceso determinarMasLejos(E ID:numero; E pasos:numero; ES maxPasos:numero; ES idMax:numero)
+  comenzar
+    si(maxPasos < pasos)
+      maxPasos:=pasos
+      idMax:=ID
+  fin
+  
+  proceso buscarPapel(ES hayPapel:boolean; ES pasos:numero)
+  variables
+    av,ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    
+    BloquearEsquina(11,11)
+    Pos(11,11)
+    si(HayPapelEnLaEsquina)
+      tomarPapel
+      Pos(av,ca)
+      LiberarEsquina(11,11)
+      depositarPapel
+      mover
+      pasos:= pasos+1
+    sino
+      Pos(av,ca)
+      LiberarEsquina(11,11)
+      hayPapel:=F
+      
+  fin
+  
+  
+areas
+  esquina: AreaC (11,11,11,11)
+  
+  area1: AreaP (4,1,4,100)
+  area2: AreaP (6,1,6,100)
+  area3: AreaP (8,1,8,100)
+  area4: AreaP (10,1,10,100)
+  areaCoordinador: AreaP(1,1,1,1)
+robots
+  robot corredores
+  variables
+    ID, pasos: numero
+    hayPapel:boolean
+  comenzar
+    RecibirMensaje(ID, RC)
+    hayPapel:=V
+    pasos:=0
+    
+    mientras(hayPapel) & (PosCa < 100)
+      buscarPapel(hayPapel, pasos)
+    
+    EnviarMensaje(ID, RC)
+    EnviarMensaje(pasos, RC)
+    
+  fin
+  
+  robot coordinador
+  variables
+    ID, idMax, maxPasos, pasos:numero
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    EnviarMensaje(4, r4)
+    
+    idMax:=-1
+    maxPasos:=-1
+    repetir(4)
+      RecibirMensaje(ID, *)
+      si(ID = 1)
+        RecibirMensaje(pasos, r1)
+      sino 
+        si(ID = 2)
+          RecibirMensaje(pasos, r2)
+        sino
+          si(ID = 3)
+            RecibirMensaje(pasos, r3)
+          sino
+            RecibirMensaje(pasos, r4)
+      determinarMasLejos(ID, pasos, maxPasos, idMax)            
+    Informar(idMax)   
+  fin
+variables
+  RC: coordinador
+  r1: corredores
+  r2: corredores
+  r3: corredores
+  r4: corredores
+comenzar
+  AsignarArea(RC, areaCoordinador)
+
+  AsignarArea(r1, area1)
+  AsignarArea(r1, esquina)
+  
+  AsignarArea(r2, area2)
+  AsignarArea(r2, esquina)
+  
+  AsignarArea(r3, area3)
+  AsignarArea(r3, esquina)
+  
+  AsignarArea(r4, area4)
+  AsignarArea(r4, esquina)
+  
+  Iniciar(RC, 1,1)
+  Iniciar(r1, 4,1)
+  Iniciar(r2, 6,1)
+  Iniciar(r3, 8,1)
+  Iniciar(r4, 10,1)
+fin

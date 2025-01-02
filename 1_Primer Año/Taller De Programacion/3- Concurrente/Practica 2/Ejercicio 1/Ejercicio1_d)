@@ -1,0 +1,114 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos
+  proceso juntarFlores(ES flor:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flor:=flor+1
+  fin 
+  
+  
+  proceso recorrerAv(ES flores:numero)
+  comenzar
+    repetir 9
+      juntarFlores(flores)
+      mover
+    juntarFlores(flores)
+  fin
+  
+  proceso determinarMax(E flores:numero; ES maxFlores:numero; E numRobot:numero; ES id:numero)
+  comenzar
+    si(flores > maxFlores)
+      maxFlores := flores
+      id := numRobot
+  fin
+  
+areas
+  area1: AreaP(1,1,1,10)
+  area2: AreaP(2,11,2,20)
+  area3: AreaP(3,21,3,30)
+  area4: AreaP(4,31,4,40)
+  area5: AreaP(5,41,5,50)
+  area6: AreaP(6,51,6,60)
+  areaJefe: AreaP(2,1,2,1)
+robots
+  robot juntador
+  variables
+    flores, numRobot:numero
+  comenzar
+    RecibirMensaje(numRobot, rFiscalizador)
+    flores := 0 
+    
+    recorrerAv(flores)
+    
+    EnviarMensaje(numRobot, rFiscalizador)
+    EnviarMensaje(flores, rFiscalizador)
+  fin
+  
+  robot jefe
+  variables
+    numRobot, flores, maxFlores, id:numero
+  comenzar
+    flores := 0
+    maxFlores := 0
+    id := 0
+    EnviarMensaje(1, r1)
+    
+    EnviarMensaje(2, r2)
+    
+    EnviarMensaje(3, r3)
+    EnviarMensaje(4, r4)
+    EnviarMensaje(5, r5)
+    EnviarMensaje(6, r6)
+    
+    repetir 6
+      RecibirMensaje(numRobot, *)
+      si(numRobot = 1)
+        RecibirMensaje(flores, r1)
+      sino
+        si(numRobot = 2)
+          RecibirMensaje(flores, r2)
+        sino
+          si(numRobot = 3)
+            RecibirMensaje(flores,r3)
+          sino
+            si(numRobot = 4)
+              RecibirMensaje(flores,r4)
+            sino
+              si(numRobot = 5)
+                RecibirMensaje(flores,r5)
+              sino
+                RecibirMensaje(flores,r6)
+      determinarMax(flores, maxFlores, numRobot, id) 
+      
+    Informar(id, maxFlores)  
+  fin
+variables
+  r1: juntador
+  r2: juntador
+  r3: juntador
+  r4: juntador
+  r5: juntador
+  r6: juntador
+  rFiscalizador: jefe
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r2, area2)
+  AsignarArea(r3, area3)
+  AsignarArea(r4, area4)
+  AsignarArea(r5, area5)
+  AsignarArea(r6, area6)
+  AsignarArea(rFiscalizador, areaJefe)
+  Iniciar(r1, 1,1)
+  Iniciar(r2, 2,11)
+  Iniciar(r3, 3,21)
+  Iniciar(r4, 4,31)
+  Iniciar(r5, 5,41)
+  Iniciar(r6, 6,51)
+  Iniciar(rFiscalizador,2,1)
+fin

@@ -1,0 +1,179 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos
+
+  proceso juntarPapeles(ES papeles:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:=papeles+1
+  fin
+
+  proceso juntarFlores(ES flores:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+  fin  
+  
+  proceso limpiarEsquina(ES papeles:numero; ES flores:numero)
+  comenzar
+    si(HayFlorEnLaEsquina)
+      juntarFlores(flores)
+    si(HayPapelEnLaEsquina)
+      juntarPapeles(papeles)
+  fin
+  
+  proceso identificarRobots
+  comenzar
+    EnviarMensaje(1,r1){Envía el ID 1 al robot R1}
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    EnviarMensaje(4,r4)
+  fin
+
+  proceso avisarRobot(E num:numero; E ok:boolean)
+  comenzar
+    si(num = 1)
+      EnviarMensaje(ok, r1)
+    sino
+      si(num = 2)
+        EnviarMensaje(ok, r2)
+      sino
+        si(num = 3)
+          EnviarMensaje(ok, r3)
+        sino
+          EnviarMensaje(ok, r4)
+  fin
+  
+  {Proceso avisarFin: avisa a todos los robots recolectores que la tarea ha finalizado}
+  proceso avisarFin(E ok:boolean)
+  comenzar
+    EnviarMensaje(ok, r1){ Envía el mensaje "ok" a R1}
+    EnviarMensaje(ok, r2)        
+    EnviarMensaje(ok, r3)  
+    EnviarMensaje(ok, r4)    
+  fin
+  
+  proceso esMaximo(E cant:numero; ES cant_max:numero; ES ID_max:numero; E ID:numero)
+  comenzar
+    si(cant > cant_max)
+      ID_max:=ID
+      cant_max:=cant
+  fin
+  
+areas
+  cuadrante: AreaPC(25,25,75,75)
+  area1: AreaP(1,1,1,1)
+  area2: AreaP(25,1,25,1)
+  area3: AreaP(30,1,30,1)
+  area4: AreaP(35,1,35,1)
+  area5: AreaP(40,1,40,1)
+robots
+  robot recolectores
+  variables
+    ID:numero
+    flores,papeles,avInicial,caInicial,av,ca,total:numero
+    gano, ok:boolean
+  comenzar
+    flores:=0
+    papeles:=0
+    avInicial:= PosAv
+    caInicial:= PosCa
+    RecibirMensaje(ID, rF)
+    
+    mientras(ok)  {Mientras el fiscalizador permita}
+      Random(av,25,75)
+      Random(ca,25,75)
+      
+      Pos(av,ca)
+      limpiarEsquina(papeles, flores) 
+      Pos(avInicial, caInicial)
+
+      EnviarMensaje(ok, rF){Notifica al fiscalizador que terminó}
+      RecibirMensaje(ok, rF){Espera nueva autorización}
+   
+    total:=papeles+flores
+    EnviarMensaje(ID, rF) { Envía su ID al fiscalizador}
+    EnviarMensaje(total, rF){Envía su total al fiscalizador}
+    RecibirMensaje(gano, rF)
+    si(gano)
+      Pos(50,50)
+  fin
+  
+  robot fiscalizador
+  variables 
+    numRobot, ID_max, cant_max, ID:numero
+    cantR1, cantR2, cantR3, cantR4:numero
+    ok:boolean
+  comenzar
+    ID_max:=-1
+    cant_max:=-1
+    ok:=V
+    identificarRobots {Asigna IDs a cada robot recolector}
+    repetir 10
+      Random(numRobot, 1, 4)
+      avisarRobot(numRobot, ok)      
+      RecibirMensaje(ok,*)
+    ok:=F
+    avisarFin(ok)
+    
+    repetir 4
+      RecibirMensaje(ID, *)
+      si(ID = 1)
+        RecibirMensaje(cantR1, r1)
+        esMaximo(cantR1, cant_max, ID_max, ID)
+      sino
+        si(ID = 2)
+          RecibirMensaje(cantR2, r2)
+          esMaximo(cantR2, cant_max, ID_max, ID)
+        sino
+          si(ID = 3)
+            RecibirMensaje(cantR3, r3)
+            esMaximo(cantR3, cant_max, ID_max, ID)
+          sino
+            RecibirMensaje(cantR4, r4)
+            esMaximo(cantR4, cant_max, ID_max, ID)
+    
+    numRobot:=1
+    repetir 4
+      si (numRobot = ID_max)
+        ok:=V
+      sino
+        ok:=F
+      avisarRobot(numRobot,ok)
+      numRobot:=numRobot+1     
+  
+  fin
+
+variables
+  rF: fiscalizador
+  r1: recolectores
+  r2: recolectores
+  r3: recolectores
+  r4: recolectores
+comenzar
+  AsignarArea(rF, area1)
+  
+  AsignarArea(r1, area2)
+  AsignarArea(r1, cuadrante)
+  
+  AsignarArea(r2, area3)
+  AsignarArea(r2, cuadrante)
+  
+  AsignarArea(r3, area4)
+  AsignarArea(r3, cuadrante)
+  
+  AsignarArea(r4, area5)
+  AsignarArea(r4, cuadrante)
+  
+  Iniciar(rF,1,1)
+  Iniciar(r1,25,1)
+  Iniciar(r2,30,1)
+  Iniciar(r3,35,1)
+  Iniciar(r4,40,1)
+fin

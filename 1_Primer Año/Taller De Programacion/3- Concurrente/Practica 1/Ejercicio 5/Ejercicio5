@@ -1,0 +1,152 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+programa Ejercicio5
+procesos 
+  proceso juntarFlores(ES flores:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores := flores + 1
+  fin
+  
+  proceso juntarPapeles(ES papeles:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:=papeles+1
+  fin  
+  
+  proceso depositarFlores(E flores:numero)
+  comenzar
+    repetir flores
+      depositarFlor
+  fin
+
+  proceso depositarPapeles(E papeles:numero)
+  comenzar
+    repetir papeles
+      depositarPapel
+  fin
+  
+  proceso limpiarRobot1
+  variables
+    flores:numero
+  comenzar
+    flores := 0
+    repetir 14
+      juntarFlores(flores)
+      mover
+    juntarFlores(flores)
+    depositarFlores(flores)
+  fin
+  
+  proceso limpiarRobot2
+  variables
+    papeles:numero
+    avenida:numero
+    calle:numero
+  comenzar
+    avenida := PosAv
+    calle := PosCa
+    papeles := 0
+    repetir 19
+      juntarPapeles(papeles)
+      mover
+    juntarPapeles(papeles)
+    
+    Pos(avenida, calle){lo posiciono al proncipio}
+    depositarPapeles(papeles)
+  fin
+  
+  proceso limpiarRobot3
+  variables
+    flores:numero
+  comenzar
+    flores:=0
+    
+    repetir 29
+      juntarFlores(flores)
+      mover
+    juntarFlores(flores)
+    
+    depositarFlores(flores)  
+  fin
+  
+  proceso limpiarRobot4
+  variables
+    papeles:numero
+    avenida:numero
+    calle:numero
+  comenzar
+    avenida := PosAv
+    calle := PosCa
+    papeles := 0
+    repetir 9
+      juntarPapeles(papeles)
+      mover
+    juntarPapeles(papeles)
+    
+    Pos(avenida, calle){lo posiciono al proncipio}
+    depositarPapeles(papeles)
+  fin
+areas
+  area1: AreaP(1,75,15,75)
+  area1_2: AreaP(1,80,15,80)  
+  area2: AreaP(75, 80, 75, 99)
+  area2_2: AreaP(80, 80, 80, 99)
+  area3: AreaP(70, 15, 99, 15)
+  area3_2: AreaP(70, 10, 99, 10)
+  area4: AreaP(10,1,10, 10)
+  area4_2: AreaP(15,1,15,10) 
+robots
+  robot robot1
+  comenzar
+    derecha
+    limpiarRobot1
+    Pos(1, 80)
+    limpiarRobot1
+  fin
+  
+  robot robot2
+  comenzar
+    limpiarRobot2
+    Pos(80,80)
+    limpiarRobot2
+  fin
+  
+  robot robot3
+  comenzar
+    derecha 
+    limpiarRobot3
+    Pos(70, 10)
+    limpiarRobot3
+  fin
+  
+  robot robot4
+  comenzar
+    limpiarRobot4
+    Pos(15,1)
+    limpiarRobot4
+  fin
+  
+variables
+  r1: robot1
+  r2: robot2
+  r3: robot3
+  r4: robot4
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r1, area1_2)
+  AsignarArea(r2, area2)
+  AsignarArea(r2, area2_2)
+  AsignarArea(r3, area3)
+  AsignarArea(r3, area3_2)
+  AsignarArea(r4, area4)
+  AsignarArea(r4, area4_2)
+  Iniciar(r1, 1,75)
+  Iniciar(r2, 75, 80)
+  Iniciar(r3, 70, 15)
+  Iniciar(r4, 10, 1)
+fin

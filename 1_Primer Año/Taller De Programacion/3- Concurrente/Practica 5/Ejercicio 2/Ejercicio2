@@ -1,0 +1,115 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos
+  proceso juntarFlor
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+areas
+  areaF: AreaP(1,4,1,4)
+  area1: AreaP (1,1,100,1)
+  area2: AreaP (1,2,100,2)
+  area3: AreaP (1,3,100,3)
+  esquina: AreaPC(50,50,50,50)
+robots
+  robot recolectores
+  variables
+    id, av, ca, esquinas:numero
+    ok:boolean
+  comenzar
+    RecibirMensaje(id,RF)
+    derecha
+    esquinas:=0
+    mientras(PosAv<100)
+      mientras((PosAv<100)&(esquinas<10)) 
+        si(HayFlorEnLaEsquina)
+          juntarFlor
+        mover
+        esquinas:=esquinas+1
+      si(HayFlorEnLaEsquina)
+        juntarFlor
+   
+      av:=PosAv
+      ca:=PosCa
+    
+      BloquearEsquina(50,50)
+      Pos(50,50)
+      mientras(HayFlorEnLaBolsa)
+        depositarFlor 
+      Pos(av,ca)
+      LiberarEsquina(50,50)
+      
+      EnviarMensaje(id, RF)
+      EnviarMensaje(av, RF)
+      RecibirMensaje(ok, RF)
+      esquinas:=0
+  fin
+  
+  robot fiscalizador
+  variables
+    cantTotal, id, completo, av, finalizo:numero
+    flores:numero
+  comenzar
+    cantTotal:=0
+    completo:=0
+    flores:=0
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    finalizo:=0
+    
+    mientras(finalizo<3)
+      repetir 3
+        RecibirMensaje(id, *)
+        si(id=1)
+          RecibirMensaje(av, r1)
+          si(av=100)
+            finalizo:=finalizo+1
+          completo:=completo+1
+        sino
+          si(id=2)
+            RecibirMensaje(av, r2)
+            si(av=100)
+              finalizo:=finalizo+1
+            completo:=completo+1
+          sino
+            RecibirMensaje(av, r3)
+            si(av=100)
+              finalizo:=finalizo+1
+            completo:=completo+1
+      si(completo=3)
+        EnviarMensaje(V,r1)       
+        EnviarMensaje(V,r2)  
+        EnviarMensaje(V,r3)          
+        completo:=0  
+    
+    Pos(50,50)
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+    Informar(flores)
+  fin
+  
+  
+variables
+  r1,r2,r3: recolectores
+  RF:fiscalizador
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r1, esquina)
+  AsignarArea(r2, area2)
+  AsignarArea(r2, esquina)
+  AsignarArea(r3, area3)
+  AsignarArea(r3, esquina)
+  AsignarArea(RF, areaF)
+  AsignarArea(RF, esquina)
+  Iniciar(r1, 1,1)
+  Iniciar(r2, 1,2)
+  Iniciar(r3, 1,3)
+  Iniciar(RF, 1,4)
+fin

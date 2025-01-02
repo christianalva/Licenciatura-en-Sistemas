@@ -1,0 +1,201 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejemplo
+procesos
+
+  proceso juntarFlores(ES flores:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+  fin
+  
+  proceso juntarPapeles(ES papeles:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:=papeles+1
+  fin
+
+  proceso hacerEscalonDerechaFlores(ES flores:numero; ES tamanio:numero)
+  comenzar
+    repetir tamanio
+      mover
+    si(HayFlorEnLaEsquina)
+      juntarFlores(flores)
+    derecha
+    repetir tamanio
+      mover
+    si(HayFlorEnLaEsquina)
+      juntarFlores(flores)
+    repetir 3
+      derecha
+    tamanio:=tamanio-1
+  fin
+  
+  proceso hacerEscalonIzquierdaFlores(ES flores:numero; ES tamanio:numero)
+  comenzar
+    repetir tamanio
+      mover
+    si(HayFlorEnLaEsquina)
+      juntarFlores(flores)
+    derecha
+    repetir tamanio
+      mover
+    si(HayFlorEnLaEsquina)
+      juntarFlores(flores)
+    repetir 3 
+      derecha
+    tamanio := tamanio + 1
+  fin
+  
+  
+  proceso hacerRecorridoCorredor1(ES flores:numero; E ID:numero)
+  variables
+    tamanio, avActual, caActual:numero
+  comenzar
+    tamanio:=5
+   
+    repetir 4
+      hacerEscalonDerechaFlores(flores,tamanio)
+    mover
+    derecha
+    avActual:=PosAv
+    caActual:=PosCa
+    
+    BloquearEsquina(15,15)
+    mover
+    EnviarMensaje(ID,rJ)
+    Pos(avActual, caActual)
+    LiberarEsquina(15,15)
+    tamanio:=2
+    repetir 2
+      derecha
+    repetir 4
+      hacerEscalonIzquierdaFlores(flores, tamanio)
+    
+    Informar(flores)
+    EnviarMensaje(V, rJ)
+  fin 
+  
+  proceso hacerEscalonIzquierdaPapeles(ES papeles:numero; ES tamanio:numero)
+  comenzar
+    repetir tamanio
+      mover
+    si(HayPapelEnLaEsquina)
+      juntarPapeles(papeles)
+    repetir 3
+      derecha
+    repetir tamanio
+      mover
+    si(HayPapelEnLaEsquina)
+      juntarPapeles(papeles)
+    derecha
+    tamanio := tamanio - 1
+  fin
+  
+  proceso hacerEscalonDerechoPapeles(ES papeles:numero; ES tamanio:numero)
+  comenzar
+    repetir tamanio 
+      mover
+    si(HayPapelEnLaEsquina)
+      juntarPapeles(papeles)
+    repetir 3
+      derecha
+    repetir tamanio
+      mover
+    si(HayPapelEnLaEsquina)
+      juntarPapeles(papeles)
+    derecha
+    
+    tamanio:=tamanio+1
+  fin
+  
+  proceso hacerRecorridoCorredor2(ES papeles:numero; E ID:numero)
+  variables
+    avInicial, caInicial, tamanio: numero
+  comenzar
+    tamanio:=5
+    
+    repetir 4
+      hacerEscalonIzquierdaPapeles(papeles, tamanio)
+    mover
+    avInicial:=PosAv
+    caInicial:=PosCa
+    repetir 3
+      derecha
+    BloquearEsquina(15,15)
+    mover
+    EnviarMensaje(ID, rJ)
+    Pos(avInicial, caInicial)
+    LiberarEsquina(15,15)
+    repetir 2
+      derecha
+    tamanio:=2
+    
+    repetir 4
+      hacerEscalonDerechoPapeles(papeles, tamanio)
+      
+    Informar(papeles)
+    EnviarMensaje(V, rJ)
+  fin
+  
+  proceso identificarRobots
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+  fin
+areas
+  pista: AreaC (1,1,31,31)
+robots
+  robot corredor1
+  variables
+    flores, ID:numero
+  comenzar
+    flores:=0
+    RecibirMensaje(ID, rJ)
+    hacerRecorridoCorredor1(flores, ID)
+  fin
+  
+  robot corredor2
+  variables
+    papeles, ID:numero
+  comenzar
+    papeles:=0
+    RecibirMensaje(ID, rJ)
+    hacerRecorridoCorredor2(papeles, ID)
+  fin
+  
+  robot jefe
+  variables
+    dato:numero
+    ganador:numero
+    termino:boolean
+  comenzar
+    termino:=F
+    identificarRobots
+    
+    RecibirMensaje(dato, *)
+    ganador := dato
+    
+    repetir 2
+      RecibirMensaje(termino, *)
+    Informar('Ganador', ganador)
+    
+  fin
+  
+variables
+  r1: corredor1
+  r2: corredor2
+  rJ: jefe
+comenzar
+  AsignarArea(r1, pista)
+  AsignarArea(r2, pista)
+  AsignarArea(rJ, pista)
+  Iniciar(r1, 1,1)
+  Iniciar(r2, 31,1)
+  Iniciar(rJ, 15,1)
+fin
